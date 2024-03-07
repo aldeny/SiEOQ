@@ -140,113 +140,43 @@
                 <div class="container-fluid px-4">
                     <h6 class="mt-4">OBAT</h6>
                     <ol class="breadcrumb mb-4"></ol>
-                    <div class="row">
+                    <div class="section_content section_content--p30">
                         <div class="col-md-4">
-                            <div class="section_content section_content--p30">
-                                <div class="card mb-3">
-                                    <div class="card-header bg-primary text-white">
-                                        <i class="bi bi-capsule"></i>
-                                        Tambah Kategori Obat
-                                    </div>
-                                    <div class="card-body">
-                                        <form action="../function/kategori/save.php" method="POST">
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="nama_kategori" name="nama_kategori"
-                                                    type="text" placeholder="Nama Kategori" required />
-                                                <label for="nama_kategori">Nama Kategori</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <textarea class="form-control" placeholder="Leave a comment here"
-                                                    id="keterangan" name="keterangan"></textarea>
-                                                <label for="keterangan">Keterangan</label>
-                                            </div>
-                                            <div class="col-auto">
-                                                <button type="submit" class="btn btn-xs btn-primary btn-sm">Tambah <i
-                                                        class="bi bi-save"></i>
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <?php
-                                    if (isset($_SESSION['success'])) {
-                                        echo '
-                                        <div class="mt-4 alert alert-success alert-dismissible fade show" role="alert">
-                                            <strong>' . $_SESSION['success'] . '</strong>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                            ';
-                                        // Hapus pesan notifikasi agar tidak ditampilkan kembali
-                                        unset($_SESSION['success']);
-                                    }
-                                    
-                                    if (isset($_SESSION['error'])) {
-                                        echo '
-                                        <div class="mt-4 alert alert-danger alert-dismissible fade show" role="alert">
-                                            <strong>' . $_SESSION['error'] . '</strong>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>';
-                                        // Hapus pesan notifikasi agar tidak ditampilkan kembali
-                                        unset($_SESSION['error']);
-                                    }
-                                ?>
-                            </div>
-                        </div>
-                        <div class="col md-8">
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <i class="fas fa-address-book me-1"></i>
-                                    Data Kategori Obat
+                            <div class="card mb-3 shadow">
+                                <div class="card-header bg-warning text-dark">
+                                    <i class="bi bi-capsule"></i>
+                                    Edit Kategori Obat
                                 </div>
                                 <div class="card-body">
-                                    <table id="data-kategori" class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Nama Kategori</th>
-                                                <th>Keterangan</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Query php -->
-                                            <?php
+                                    <?php 
                                         include '../koneksi.php';
-
-                                        $no = 1;
-
-                                        $data = mysqli_query(
-                                            $koneksi,
-                                            "SELECT * FROM kategori"
-                                        );
-                                        while ($item = mysqli_fetch_array($data)){
-                                            
+                                        $id = $_GET['id'];
+                                        $data = mysqli_query($koneksi,"SELECT * FROM kategori where id = '$id'");
+                                        $data = mysqli_fetch_array($data);
+                                        
                                     ?>
-
-                                            <tr>
-                                                <td><?php echo $no++ ?></td>
-                                                <td><?php echo $item['nama_kategori'] ?></td>
-                                                <?php if ($item['keterangan'] == null) {
-                                                    $item['keterangan'] = "Tidak ada keterangan";
-                                                } ?>
-                                                <td><?php echo $item['keterangan'] ?></td>
-                                                <td>
-                                                    <a class="btn btn-xs btn-warning btn-sm"
-                                                        href="edit.php?id=<?php echo $item['id'] ?>">Edit</a>
-                                                    <a class="btn btn-xs btn-danger btn-sm"
-                                                        onclick="confirmDelete(<?php echo $item['id'] ?>)">
-                                                        Hapus
-                                                    </a>
-                                                </td>
-                                            </tr>
-
-                                            <?php
-                                        }
-                                        ?>
-                                            <!-- End Query php -->
-
-                                        </tbody>
-                                    </table>
+                                    <form action="../function/kategori/update.php" method="POST">
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="id" name="id" value="<?= $data['id']; ?>"
+                                                type="hidden" />
+                                            <input class="form-control" id="nama_kategori" name="nama_kategori"
+                                                value="<?= $data['nama_kategori']; ?>" type="text"
+                                                placeholder="Nama Kategori" />
+                                            <label for="nama_kategori">Nama Kategori</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <textarea class="form-control" placeholder="Leave a comment here"
+                                                id="keterangan"
+                                                name="keterangan"><?php echo $data['keterangan']; ?></textarea>
+                                            <label for="keterangan">Keterangan</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="submit" class="btn btn-xs btn-warning btn-sm">Update <i
+                                                    class="bi bi-save"></i>
+                                            </button>
+                                            <a href="index.php" class="btn btn-xs btn-dark btn-sm">Cancel</a>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -305,7 +235,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Redirect ke halaman penghapusan data jika dikonfirmasi
-                    window.location.href = '../function/kategori/delete.php?id=' + id;
+                    window.location.href = '../function/supplier/delete.php?id=' + id;
                 }
             });
         }
@@ -313,7 +243,7 @@
 
     <script>
         $(document).ready(function () {
-            $('#data-kategori').DataTable();
+            $('#data-obat').DataTable();
         });
     </script>
 </body>
