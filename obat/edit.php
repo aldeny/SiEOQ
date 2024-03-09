@@ -85,8 +85,8 @@
                                 <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
                                     data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="../obat/index.php">Data Obat</a>
-                                        <a class="nav-link" href="index.php">Data Kategori</a>
+                                        <a class="nav-link" href="index.php">Data Obat</a>
+                                        <a class="nav-link" href="../kategori-obat/index.php">Data Kategori</a>
                                         <a class="nav-link" href="../satuan/index.php">Data Satuan</a>
                                     </nav>
                                 </div>
@@ -141,118 +141,148 @@
                 <div class="container-fluid px-4">
                     <h6 class="mt-4">OBAT</h6>
                     <ol class="breadcrumb mb-4"></ol>
+                    <?php
+                        if (isset($_SESSION['error'])) {
+                            echo '
+                            <div class="mt-4 alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>' . $_SESSION['success'] . '</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>';
+                            // Hapus pesan notifikasi agar tidak ditampilkan kembali
+                            unset($_SESSION['error']);
+                        }
+                    ?>
                     <div class="row">
-                        <div class="col-md-4">
-                            <div class="section_content section_content--p30">
-                                <div class="card mb-3">
-                                    <div class="card-header bg-primary text-white">
-                                        <i class="bi bi-capsule"></i>
-                                        Tambah Kategori Obat
-                                    </div>
-                                    <div class="card-body">
-                                        <form action="../function/kategori/save.php" method="POST">
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="nama_kategori" name="nama_kategori"
-                                                    type="text" placeholder="Nama Kategori" required />
-                                                <label for="nama_kategori">Nama Kategori</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <textarea class="form-control" placeholder="Leave a comment here"
-                                                    id="keterangan" name="keterangan"></textarea>
-                                                <label for="keterangan">Keterangan</label>
-                                            </div>
-                                            <div class="col-auto">
-                                                <button type="submit" class="btn btn-xs btn-primary btn-sm">Tambah <i
-                                                        class="bi bi-save"></i>
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <?php
-                                    if (isset($_SESSION['success'])) {
-                                        echo '
-                                        <div class="mt-4 alert alert-success alert-dismissible fade show" role="alert">
-                                            <strong>' . $_SESSION['success'] . '</strong>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                            ';
-                                        // Hapus pesan notifikasi agar tidak ditampilkan kembali
-                                        unset($_SESSION['success']);
-                                    }
-                                    
-                                    if (isset($_SESSION['error'])) {
-                                        echo '
-                                        <div class="mt-4 alert alert-danger alert-dismissible fade show" role="alert">
-                                            <strong>' . $_SESSION['error'] . '</strong>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>';
-                                        // Hapus pesan notifikasi agar tidak ditampilkan kembali
-                                        unset($_SESSION['error']);
-                                    }
-                                ?>
-                            </div>
-                        </div>
-                        <div class="col md-8">
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <i class="fas fa-address-book me-1"></i>
-                                    Data Kategori Obat
+                        <div class="section_content section_content--p30">
+                            <div class="card mb-3">
+                                <div class="card-header bg-warning text-dark">
+                                    <i class="bi bi-capsule"></i>
+                                    Edit Obat
                                 </div>
                                 <div class="card-body">
-                                    <table id="data-kategori" class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Nama Kategori</th>
-                                                <th>Keterangan</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Query php -->
-                                            <?php
+                                    <?php
+
                                         include '../koneksi.php';
+                                        $id = $_GET['id'];
 
-                                        $no = 1;
-
-                                        $data = mysqli_query(
-                                            $koneksi,
-                                            "SELECT * FROM kategori"
-                                        );
-                                        while ($item = mysqli_fetch_array($data)){
-                                            
+                                        $query = "SELECT p.*, k.nama_kategori, s.nama_satuan, sup.nama_sup 
+                                                    FROM produk as p 
+                                                    JOIN kategori AS k ON p.kategori_id = k.id
+                                                    JOIN satuan AS s ON p.satuan_id = s.id 
+                                                    JOIN supplier AS sup ON p.sup_id = sup.id
+                                                    WHERE p.id = '$id'";
+                                        $supplier = mysqli_query($koneksi, "SELECT * FROM supplier");
+                                        $kategori = mysqli_query($koneksi, "SELECT * FROM kategori");
+                                        $satuan = mysqli_query($koneksi, "SELECT * FROM satuan");
+                                        $result = mysqli_query($koneksi, $query);
+                                        $data = mysqli_fetch_array($result);
+                                        
                                     ?>
-
-                                            <tr>
-                                                <td><?php echo $no++ ?></td>
-                                                <td><?php echo $item['nama_kategori'] ?></td>
-                                                <?php if ($item['keterangan'] == null) {
-                                                    $item['keterangan'] = "Tidak ada keterangan";
-                                                } ?>
-                                                <td><?php echo $item['keterangan'] ?></td>
-                                                <td>
-                                                    <a class="btn btn-xs btn-warning btn-sm"
-                                                        href="edit.php?id=<?php echo $item['id'] ?>">Edit</a>
-                                                    <a class="btn btn-xs btn-danger btn-sm"
-                                                        onclick="confirmDelete(<?php echo $item['id'] ?>)">
-                                                        Hapus
-                                                    </a>
-                                                </td>
-                                            </tr>
-
-                                            <?php
-                                        }
-                                        ?>
-                                            <!-- End Query php -->
-
-                                        </tbody>
-                                    </table>
+                                    <form class="row g-2" action="../function/obat/update.php" method="POST">
+                                        <div class="col-md-6">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" name="id" value="<?= $data['id'] ?>" hidden>
+                                                <input class="form-control" id="kode_obat" name="kode_obat" type="text"
+                                                    placeholder="Kode Obat" value="<?= $data['kode_obat'] ?>"
+                                                    readonly />
+                                                <label for="kode_obat">Kode Obat</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating mb-3">
+                                                <input class="form-control" id="nama_obat" name="nama_obat"
+                                                    value="<?= $data['nama_obat'] ?>" type="text"
+                                                    placeholder="Nama Obat" />
+                                                <label for="nama_obat">Nama Obat</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-select" id="supplier" name="supplier"
+                                                    aria-label="Floating label select example">
+                                                    <option selected>Pilih supplier</option>
+                                                    <?php while ($sup = mysqli_fetch_array($supplier)) { ?>
+                                                    <option value="<?= $sup['id'] ?>" <?php if ($sup['id'] == $data['sup_id']) {
+                                                        echo 'selected';
+                                                    } ?>>
+                                                        <?= $sup['kode_sup'].' - '. $sup['nama_sup'] ?>
+                                                    </option>
+                                                    <?php } ?>
+                                                </select>
+                                                <label for="supplier">Supplier</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-select" id="kategori" name="kategori"
+                                                    aria-label="Floating label select example">
+                                                    <option selected>Pilih kategori obat</option>
+                                                    <?php while ($kat = mysqli_fetch_array($kategori)) { ?>
+                                                    <option value="<?= $kat['id'] ?>" <?php if ($kat['id'] == $data['kategori_id']) {
+                                                        echo 'selected';
+                                                    } ?>>
+                                                        <?= $kat['nama_kategori'] ?>
+                                                    </option>
+                                                    <?php } ?>
+                                                </select>
+                                                <label for="kategori">Kategori Obat</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-select" id="satuan" name="satuan"
+                                                    aria-label="Floating label select example">
+                                                    <option selected>Pilih satuan obat</option>
+                                                    <?php while ($row = mysqli_fetch_array($satuan)) { ?>
+                                                    <option value="<?= $row['id'] ?>" <?php if ($row['id'] == $data['satuan_id']) {
+                                                        echo 'selected';
+                                                    } ?>>
+                                                        <?= $row['nama_satuan'] ?>
+                                                    </option>
+                                                    <?php } ?>
+                                                </select>
+                                                <label for="satuan">Satuan</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating mb-3">
+                                                <input class="form-control" id="stock" name="stock"
+                                                    value="<?= $data['stock'] ?>" type="text"
+                                                    placeholder="nameexample" />
+                                                <label for="stock">Stock</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating mb-3">
+                                                <?php
+                                                    $harga = $data['harga'];
+                                                    $harga_rupiah = number_format($harga, 0, ',', '.');
+                                                ?>
+                                                <input class="form-control" id="harga" name="harga" type="text"
+                                                    placeholder="Rp.000.00" value="<?= $harga_rupiah ?>"
+                                                    onkeyup="formatRupiah(this)" />
+                                                <label for="harga">Harga Obat</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-floating mb-3">
+                                                <textarea class="form-control" placeholder="Leave a comment here"
+                                                    id="keterangan"
+                                                    name="keterangan"><?= $data['keterangan'] ?></textarea>
+                                                <label for="keterangan">Keterangan</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="submit" class="btn btn-xs btn-warning btn-sm">Update <i
+                                                    class="bi bi-save"></i>
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </main>
             <footer class="py-4 bg-light mt-auto">
@@ -306,7 +336,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Redirect ke halaman penghapusan data jika dikonfirmasi
-                    window.location.href = '../function/kategori/delete.php?id=' + id;
+                    window.location.href = '../function/supplier/delete.php?id=' + id;
                 }
             });
         }
@@ -314,8 +344,26 @@
 
     <script>
         $(document).ready(function () {
-            $('#data-kategori').DataTable();
+            $('#data-obat').DataTable();
         });
+    </script>
+
+    <script>
+        function formatRupiah(angka) {
+            var number_string = angka.value.replace(/[^,\d]/g, '').toString(),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            angka.value = rupiah;
+        }
     </script>
 </body>
 

@@ -73,7 +73,7 @@
                                 <a class="nav-link" href="../user/user.php">
                                     User
                                 </a>
-                                <a class="nav-link" href="supplier.php">
+                                <a class="nav-link" href="../supplier/supplier.php">
                                     Supplier
                                 </a>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
@@ -85,8 +85,9 @@
                                 <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
                                     data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="../obat/index.php">Data Obat</a>
                                         <a class="nav-link" href="../kategori-obat/index.php">Data Kategori</a>
-                                        <a class="nav-link" href="login.html">Data Satuan</a>
+                                        <a class="nav-link" href="index.php">Data Satuan</a>
                                     </nav>
                                 </div>
                             </nav>
@@ -140,137 +141,48 @@
                 <div class="container-fluid px-4">
                     <h6 class="mt-4">OBAT</h6>
                     <ol class="breadcrumb mb-4"></ol>
-                    <div class="row">
-                        <div class="section_content section_content--p30">
-                            <div class="card mb-3">
-                                <div class="card-header bg-primary text-white">
+                    <div class="section_content section_content--p30">
+                        <div class="col-md-4">
+                            <div class="card mb-3 shadow">
+                                <div class="card-header bg-warning text-dark">
                                     <i class="bi bi-capsule"></i>
-                                    Tambah Obat
+                                    Edit Satuan Obat
                                 </div>
                                 <div class="card-body">
-                                    <form class="row g-2">
-                                        <div class="col-md-6">
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="kode_obat" name="kode_obat" type="text"
-                                                    placeholder="Kode Obat" />
-                                                <label for="kode_obat">Kode Obat</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="nama_obat" name="nama_obat" type="text"
-                                                    placeholder="Nama Obat" />
-                                                <label for="nama_obat">Nama Obat</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-10">
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputText" type="text"
-                                                    placeholder="SUP-001" />
-                                                <label for="inputText">Kategori Obat</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tambah
-                                                Kategori</button>
-                                        </div>
-
+                                    <?php 
+                                        include '../koneksi.php';
+                                        $id = $_GET['id'];
+                                        $data = mysqli_query($koneksi,"SELECT * FROM satuan where id = '$id'");
+                                        $data = mysqli_fetch_array($data);
+                                        
+                                    ?>
+                                    <form action="../function/satuan/update.php" method="POST">
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputText" type="text"
-                                                placeholder="nameexample" />
-                                            <label for="inputText">Satuan</label>
+                                            <input class="form-control" id="id" name="id" value="<?= $data['id']; ?>"
+                                                type="hidden" />
+                                            <input class="form-control" id="nama_satuan" name="nama_satuan"
+                                                value="<?= $data['nama_satuan']; ?>" type="text"
+                                                placeholder="Nama satuan" />
+                                            <label for="nama_satuan">Nama Satuan</label>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputText" type="text"
-                                                placeholder="nameexample" />
-                                            <label for="inputText">Supplier</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputText" type="text"
-                                                placeholder="nameexample" />
-                                            <label for="inputText">Stock</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputnumber" type="text" pattern="0-9"
-                                                placeholder="Rp.000.00" />
-                                            <label for="inputnumber">Harga Obat</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputText" type="text"
-                                                placeholder="nameexample" />
-                                            <label for="inputText">Keterangan</label>
+                                            <textarea class="form-control" placeholder="Leave a comment here"
+                                                id="keterangan"
+                                                name="keterangan"><?php echo $data['keterangan']; ?></textarea>
+                                            <label for="keterangan">Keterangan</label>
                                         </div>
                                         <div class="col-auto">
-                                            <button type="submit" class="btn btn-xs btn-primary btn-sm">Tambah <i
+                                            <button type="submit" class="btn btn-xs btn-warning btn-sm">Update <i
                                                     class="bi bi-save"></i>
                                             </button>
+                                            <a href="index.php" class="btn btn-xs btn-dark btn-sm">Cancel</a>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
-
                     </div>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-address-book me-1"></i>
-                            Data Obat
-                        </div>
-                        <div class="card-body">
-                            <table id="data-obat" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Kode Obat</th>
-                                        <th>Nama Obat</th>
-                                        <th>Kategori Obat</th>
-                                        <th>Satuan</th>
-                                        <th>Harga</th>
-                                        <th>Supplier</th>
-                                        <th>Stock</th>
-                                        <th>Keterangan</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Query php -->
-                                    <?php
-                                        include '../koneksi.php';
 
-                                        $no = 1;
-
-                                        $data = mysqli_query(
-                                            $koneksi,
-                                            "SELECT * FROM produk"
-                                        );
-                                        while ($item = mysqli_fetch_array($data)){
-                                            
-                                    ?>
-
-                                    <tr>
-                                        <td><?php echo $no++ ?></td>
-                                        <td><?php echo $item['kode_obat'] ?></td>
-                                        <td><?php echo $item['nama_obat'] ?></td>
-                                        <td><?php echo $item['kategori_id'] ?></td>
-                                        <td><?php echo $item['satuan_id'] ?></td>
-                                        <td><?php echo $item['stock_id'] ?></td>
-                                        <td><?php echo $item['harga_id'] ?></td>
-                                        <td><?php echo $item['sup_id'] ?></td>
-                                        <td><?php echo $item['keterangan'] ?></td>
-                                        <td>
-                                            <a class="btn btn-xs btn-warning btn-sm" href="edit-obat.php">Edit</a>
-                                            <a class="btn btn-xs btn-dark btn-sm" href="#">Hapus</a>
-                                        </td>
-                                    </tr>
-
-                                    <?php
-                                        }
-                                        ?>
-                                    <!-- End Query php -->
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
                 </div>
             </main>
             <footer class="py-4 bg-light mt-auto">

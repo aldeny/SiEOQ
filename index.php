@@ -78,8 +78,9 @@
                                 <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
                                     data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="obat/index.php">Data Obat</a>
                                         <a class="nav-link" href="kategori-obat/index.php">Data Kategori</a>
-                                        <a class="nav-link" href="login.html">Data Satuan</a>
+                                        <a class="nav-link" href="satuan/index.php">Data Satuan</a>
                                     </nav>
                                 </div>
                             </nav>
@@ -135,14 +136,14 @@
                     </ol>
                     <div class="row">
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-dark text-white mb-4">
+                            <div class="card bg-info text-white mb-4 shadow">
                                 <?php 
                                     include 'koneksi.php';
                                     $query = mysqli_query($koneksi, "SELECT COUNT(id) AS total FROM supplier");
                                     $data = mysqli_fetch_assoc($query);
                                     $total = $data['total'];
                                 ?>
-                                <div class="card-body">Supplier</div>
+                                <div class="card-body fw-bold">Supplier</div>
                                 <h1 class="text-center"><?= $total ?></h1>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
                                     <a class="small text-white stretched-link" href="supplier/supplier.php">View
@@ -152,10 +153,17 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-dark text-white mb-4">
-                                <div class="card-body">Total Obat</div>
+                            <div class="card bg-danger shadow text-white mb-4">
+                                <?php
+                                    include 'koneksi.php';
+                                    $query = mysqli_query($koneksi, "SELECT COUNT(id) AS total FROM produk");
+                                    $data = mysqli_fetch_assoc($query);
+                                    $total = $data['total'];
+                                ?>
+                                <div class="card-body fw-bold">Total Obat</div>
+                                <h1 class="text-center"><?= $total ?></h1>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
+                                    <a class="small text-white stretched-link" href="obat/index.php">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>

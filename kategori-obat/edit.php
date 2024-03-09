@@ -85,8 +85,9 @@
                                 <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
                                     data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="../obat/index.php">Data Obat</a>
                                         <a class="nav-link" href="index.php">Data Kategori</a>
-                                        <a class="nav-link" href="login.html">Data Satuan</a>
+                                        <a class="nav-link" href="../satuan/index.php">Data Satuan</a>
                                     </nav>
                                 </div>
                             </nav>

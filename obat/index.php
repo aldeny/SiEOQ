@@ -7,10 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Supplier - APT Yurikha Farma</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <title>Obat - apt yurikha farma</title>
+    <link href="../css/datatables.bootstrap.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
+    <link href="../css/bootsrap.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- jquery -->
+    <link href="//cdn.datatables.net/2.0.1/css/dataTables.dataTables.min.css" />
     <!-- bootstrap icon -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
@@ -70,7 +73,7 @@
                                 <a class="nav-link" href="../user/user.php">
                                     User
                                 </a>
-                                <a class="nav-link" href="supplier.php">
+                                <a class="nav-link" href="../supplier/supplier.php">
                                     Supplier
                                 </a>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
@@ -82,7 +85,7 @@
                                 <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
                                     data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="../obat/index.php">Data Obat</a>
+                                        <a class="nav-link" href="index.php">Data Obat</a>
                                         <a class="nav-link" href="../kategori-obat/index.php">Data Kategori</a>
                                         <a class="nav-link" href="../satuan/index.php">Data Satuan</a>
                                     </nav>
@@ -136,7 +139,8 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h6 class="mt-4">SUPPLIER</h6>
+                    <h6 class="mt-4">OBAT</h6>
+                    <ol class="breadcrumb mb-4"></ol>
                     <?php
                         if (isset($_SESSION['success'])) {
                             echo '
@@ -159,54 +163,72 @@
                             unset($_SESSION['error']);
                         }
                     ?>
-                    <ol class="breadcrumb mb-4"></ol>
-                    <div class="row">
-                        <div class="section_content section_content--p30">
-                            <div class="card mb-3 shadow">
-                                <div class="card-header bg-info text-dark fw-bold">
-                                    <i class="fas fa-user text-dark"></i>
-                                    Edit Supplier
-                                </div>
-                                <div class="card-body">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-address-book me-1"></i>
+                            Data Obat
+                        </div>
+                        <div class="card-body">
+                            <a href="create.php" class="btn btn-sm btn-primary text-white mb-4"><i
+                                    class="bi bi-plus-circle-fill"></i>
+                                Tambah Data Obat</a>
+                            <table id="data-obat" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Kode Obat</th>
+                                        <th>Nama Obat</th>
+                                        <th>Harga</th>
+                                        <th>Stock</th>
+                                        <th>Satuan</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Query php -->
                                     <?php
                                         include '../koneksi.php';
-                                        $id = $_GET['id'];
-                                        $datas = mysqli_query($koneksi, "SELECT * FROM supplier where id= $id");
-                                        $data = mysqli_fetch_array($datas);
+
+                                        $no = 1;
+
+                                        $data = mysqli_query(
+                                            $koneksi,
+                                            "SELECT p.id, p.nama_obat, p.kode_obat, p.stock, p.harga, p.keterangan, k.nama_kategori, s.nama_satuan, sup.nama_sup 
+                                            FROM produk as p 
+                                            JOIN kategori AS k ON p.kategori_id = k.id
+                                            JOIN satuan AS s ON p.satuan_id = s.id 
+                                            JOIN supplier AS sup ON p.sup_id = sup.id;"
+                                        );
+                                        while ($item = mysqli_fetch_array($data)){
+                                            
                                     ?>
-                                    <form action="../function/supplier/update.php" method="POST">
-                                        <div class="form-floating mb-3">
-                                            <input type="text" id="id" name="id" value="<?php echo $data['id'] ?>"
-                                                hidden>
-                                            <input class="form-control" id="kode_sup" name="kode_sup"
-                                                value="<?php echo $data['kode_sup'] ?>" type="text" readonly required />
-                                            <label for="kode_sup">KD-Supplier</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="nama_sup" name="nama_sup" type="text"
-                                                value="<?php echo $data['nama_sup'] ?>" placeholder="nameexample"
-                                                required />
-                                            <label for="nama_sup">Nama Supplier</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <textarea class="form-control" placeholder="Leave a comment here"
-                                                id="alamat" name="alamat"
-                                                required><?php echo $data['alamat'] ?></textarea>
-                                            <label for="alamat">Alamat</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="no_hp" name="no_hp" type="text"
-                                                value="<?php echo $data['no_hp'] ?>" placeholder="nameexample" min="11"
-                                                max="12" required />
-                                            <label for="no_hp">No Hp</label>
-                                        </div>
-                                        <button type="submit" class="btn btn-xs btn-warning btn-sm">Update <i
-                                                class="bi bi-save"></i>
-                                        </button>
-                                        <a href="supplier.php" class="btn btn-xs btn-dark btn-sm">Cancel</a>
-                                    </form>
-                                </div>
-                            </div>
+
+                                    <tr>
+                                        <td><?php echo $no++ ?></td>
+                                        <td><?php echo $item['kode_obat'] ?></td>
+                                        <td><?php echo $item['nama_obat'] ?></td>
+                                        <td><?php echo 'Rp ' . number_format($item['harga'], 0, ',', '.'); ?></td>
+                                        <td><?php echo $item['stock'] ?></td>
+                                        <td><?php echo $item['nama_satuan'] ?></td>
+                                        <td>
+                                            <button class="btn btn-xs btn-info btn-sm btn-detail"
+                                                data-id="<?php echo $item['id'] ?>">Detail</button>
+                                            <a class="btn btn-xs btn-warning btn-sm"
+                                                href="edit.php?id=<?php echo $item['id'] ?>">Edit</a>
+                                            <a class="btn btn-xs btn-danger btn-sm"
+                                                onclick="confirmDelete(<?php echo $item['id'] ?>)">
+                                                Hapus
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                    <?php
+                                        }
+                                        ?>
+                                    <!-- End Query php -->
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -225,20 +247,147 @@
                     </div>
                 </div>
             </footer>
+
+            <!-- Modal -->
+            <div class="modal fade" id="detailModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info">
+                            <h5 class="modal-title fw-bold" id="staticBackdropLabel">Detail Produk/Obat</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <!-- Konten modal -->
+                        <div class="modal-body">
+                            <table class="table table-bordered">
+                                <tbody id="detailTableBody">
+                                    <!-- Baris-baris tabel akan ditambahkan di sini -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
     </script>
     <script src="../js/scripts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="../assets/demo/chart-area-demo.js"></script>
-    <script src="../assets/demo/chart-bar-demo.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
-        crossorigin="anonymous"></script>
-    <script src="../js/datatables-simple-demo.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <!-- jangan lupa menambahkan script js sweet alert dibawah ini -->
+    <script src="../js/jquery.v371.js"></script>
+    <script src="//cdn.datatables.net/2.0.1/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.7/dist/sweetalert2.all.min.js"></script>
+
+    <?php if(@$_SESSION['sukses']){ ?>
+
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses',
+            text: 'data berhasil dihapus',
+            timer: 3000,
+            showConfirmButton: false
+        })
+    </script>
+    <!-- jangan lupa untuk menambahkan unset agar sweet alert tidak muncul lagi saat do refresh -->
+    <?php unset($_SESSION['sukses']); } ?>
+
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: 'Apakah Anda yakin ingin menghapus data ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect ke halaman penghapusan data jika dikonfirmasi
+                    window.location.href = '../function/obat/delete.php?id=' + id;
+                }
+            });
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#data-obat').DataTable();
+
+            $('.btn-detail').click(function () {
+                var id = $(this).data('id');
+
+                $.ajax({
+                    url: '../function/obat/detail.php',
+                    type: 'GET',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json', // Tentukan tipe data yang diharapkan
+                    success: function (response) {
+                        // Periksa jika tidak ada kesalahan dalam respons
+                        if (!response.error) {
+                            // Hapus baris-baris sebelumnya jika ada
+                            $('#detailTableBody').empty();
+                            // Tambahkan baris-baris baru ke dalam tabel
+                            $('#detailTableBody').append(
+                                '<tr><td>Kode Obat</td><td>' + response.kode_obat +
+                                '</td></tr>' +
+                                '<tr><td>Nama Obat</td><td>' + response.nama_obat +
+                                '</td></tr>' +
+                                '<tr><td>Harga</td><td>' + formatRupiah(response
+                                    .harga) +
+                                '</td></tr>' +
+                                '<tr><td>Stock</td><td>' + response.stock +
+                                '</td></tr>' +
+                                '<tr><td>Satuan</td><td>' + response.satuan +
+                                '</td></tr>' +
+                                '<tr><td>Nama Kategori</td><td>' + response
+                                .nama_kategori +
+                                '</td></tr>' +
+                                '<tr><td>Nama Supplier</td><td>' + response
+                                .nama_sup +
+                                '</td></tr>' +
+                                '<tr><td>Keterangan</td><td>' + response
+                                .keterangan +
+                                '</td></tr>');
+                            // Tampilkan modal
+                            $('#detailModal').modal('show');
+                        } else {
+                            // Tampilkan pesan kesalahan jika ada
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+
+        // Fungsi untuk memformat angka ke dalam format rupiah
+        function formatRupiah(angka) {
+            var number_string = angka.toString().replace(/[^,\d]/g, ''),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            // tambahkan titik jika yang di input sudah menjadi angka ribuan
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            return 'Rp ' + rupiah;
+        }
+    </script>
+
 </body>
 
 </html>

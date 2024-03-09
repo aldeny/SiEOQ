@@ -7,11 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>User - APT Yurikha Farma</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <title>Obat - apt yurikha farma</title>
+    <link href="../css/datatables.bootstrap.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
+    <link href="../css/bootsrap.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- jquery -->
+    <link href="//cdn.datatables.net/2.0.1/css/dataTables.dataTables.min.css" />
+    <!-- bootstrap icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
+
+<?php session_start(); ?>
 
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -63,7 +70,7 @@
                         <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
                             data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                <a class="nav-link" href="../user.php">
+                                <a class="nav-link" href="../user/user.php">
                                     User
                                 </a>
                                 <a class="nav-link" href="../supplier/supplier.php">
@@ -80,7 +87,7 @@
                                     <nav class="sb-sidenav-menu-nested nav">
                                         <a class="nav-link" href="../obat/index.php">Data Obat</a>
                                         <a class="nav-link" href="../kategori-obat/index.php">Data Kategori</a>
-                                        <a class="nav-link" href="../satuan/index.php">Data Satuan</a>
+                                        <a class="nav-link" href="index.php">Data Satuan</a>
                                     </nav>
                                 </div>
                             </nav>
@@ -132,70 +139,120 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h6 class="mt-4">USER</h6>
+                    <h6 class="mt-4">OBAT</h6>
                     <ol class="breadcrumb mb-4"></ol>
                     <div class="row">
-                        <div class="section_content section_content--p30">
-                            <div class="card mb-3">
+                        <div class="col-md-4">
+                            <div class="section_content section_content--p30">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-primary text-white">
+                                        <i class="bi bi-capsule"></i>
+                                        Tambah Satuan Obat
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="../function/satuan/save.php" method="POST">
+                                            <div class="form-floating mb-3">
+                                                <input class="form-control" id="nama_satuan" name="nama_satuan"
+                                                    type="text" placeholder="Nama Satuan" required />
+                                                <label for="nama_satuan">Nama Satuan</label>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <textarea class="form-control" placeholder="Leave a comment here"
+                                                    id="keterangan" name="keterangan"></textarea>
+                                                <label for="keterangan">Keterangan</label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-xs btn-primary btn-sm">Tambah <i
+                                                        class="bi bi-save"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <?php
+                                    if (isset($_SESSION['success'])) {
+                                        echo '
+                                        <div class="mt-4 alert alert-success alert-dismissible fade show" role="alert">
+                                            <strong>' . $_SESSION['success'] . '</strong>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                            ';
+                                        // Hapus pesan notifikasi agar tidak ditampilkan kembali
+                                        unset($_SESSION['success']);
+                                    }
+                                    
+                                    if (isset($_SESSION['error'])) {
+                                        echo '
+                                        <div class="mt-4 alert alert-danger alert-dismissible fade show" role="alert">
+                                            <strong>' . $_SESSION['error'] . '</strong>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>';
+                                        // Hapus pesan notifikasi agar tidak ditampilkan kembali
+                                        unset($_SESSION['error']);
+                                    }
+                                ?>
+                            </div>
+                        </div>
+                        <div class="col md-8">
+                            <div class="card mb-4">
                                 <div class="card-header">
-                                    <i class="fas fa-user"></i>
-                                    Edit User
+                                    <i class="fas fa-address-book me-1"></i>
+                                    Data Satuan Obat
                                 </div>
                                 <div class="card-body">
-                                    <?php
+                                    <table id="data-satuan" class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Nama Satuan</th>
+                                                <th>Keterangan</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Query php -->
+                                            <?php
                                         include '../koneksi.php';
-                                        $id = $_GET['id'];
-                                        $data = mysqli_query($koneksi,"SELECT u.*, r.nama_role FROM user AS u INNER JOIN role AS r ON u.role_id = r.id WHERE u.id = '$id'");
-                                        $d = mysqli_fetch_array($data);
+
+                                        $no = 1;
+
+                                        $data = mysqli_query(
+                                            $koneksi,
+                                            "SELECT * FROM satuan"
+                                        );
+                                        while ($item = mysqli_fetch_array($data)){
+                                            
                                     ?>
-                                    <form action="../function/user/user_update.php" method="POST">
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" type="text" name="id"
-                                                value="<?php echo $d['id']; ?>" hidden />
-                                            <input class="form-control" id="username" type="text" name="username"
-                                                value="<?php echo $d['username']; ?>" placeholder="Masukkan Username">
-                                            <label for="username">Username</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="nama" type="text" name="nama"
-                                                value="<?php echo $d['nama']; ?>" placeholder="Masukkan Nama" />
-                                            <label for="nama">Nama</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="password" type="text" name="password"
-                                                value="<?php echo $d['password']; ?>" placeholder="Masukkan Password" />
-                                            <label for="password">Password</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <select class="form-select" id="role_id" name="role_id"
-                                                aria-label="Floating label select example">
-                                                <option disabled selected>Pilih Role User
-                                                </option>
 
-                                                <option value="1" <?php if ($d['role_id'] == 1) {
-                                                    echo "selected";
-                                                }
-                                                ?>>
-                                                    Apoteker
-                                                </option>
-                                                <option value="2" <?php if ($d['role_id'] == 2) {
-                                                    echo "selected";
-                                                }
-                                                ?>>
-                                                    Admin
-                                                </option>
+                                            <tr>
+                                                <td><?php echo $no++ ?></td>
+                                                <td><?php echo $item['nama_satuan'] ?></td>
+                                                <?php if ($item['keterangan'] == null) {
+                                                    $item['keterangan'] = "Tidak ada keterangan";
+                                                } ?>
+                                                <td><?php echo $item['keterangan'] ?></td>
+                                                <td>
+                                                    <a class="btn btn-xs btn-warning btn-sm"
+                                                        href="edit.php?id=<?php echo $item['id'] ?>">Edit</a>
+                                                    <a class="btn btn-xs btn-danger btn-sm"
+                                                        onclick="confirmDelete(<?php echo $item['id'] ?>)">
+                                                        Hapus
+                                                    </a>
+                                                </td>
+                                            </tr>
 
-                                            </select>
-                                            <label for="role_id">Role User</label>
-                                        </div>
-                                        <button type="submit" class="btn btn-xs btn-warning btn-sm">Update</button>
-                                        <a class="btn btn-xs btn-dark btn-sm" href="../user.php">Cancel</a>
-                                    </form>
+                                            <?php
+                                        }
+                                        ?>
+                                            <!-- End Query php -->
+
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-
                     </div>
+
                 </div>
             </main>
             <footer class="py-4 bg-light mt-auto">
@@ -217,12 +274,49 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
     </script>
     <script src="../js/scripts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="../assets/demo/chart-area-demo.js"></script>
-    <script src="../assets/demo/chart-bar-demo.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
-        crossorigin="anonymous"></script>
-    <script src="../js/datatables-simple-demo.js"></script>
+    <script src="../js/jquery.v371.js"></script>
+    <script src="//cdn.datatables.net/2.0.1/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.7/dist/sweetalert2.all.min.js"></script>
+
+    <?php if(@$_SESSION['sukses']){ ?>
+
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses',
+            text: 'data berhasil dihapus',
+            timer: 3000,
+            showConfirmButton: false
+        })
+    </script>
+    <!-- jangan lupa untuk menambahkan unset agar sweet alert tidak muncul lagi saat do refresh -->
+    <?php unset($_SESSION['sukses']); } ?>
+
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: 'Apakah Anda yakin ingin menghapus data ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect ke halaman penghapusan data jika dikonfirmasi
+                    window.location.href = '../function/satuan/delete.php?id=' + id;
+                }
+            });
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#data-satuan').DataTable();
+        });
+    </script>
 </body>
 
 </html>
