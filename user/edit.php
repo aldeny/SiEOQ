@@ -16,7 +16,7 @@
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="../index.php">APT. Yurikha Farma</a>
+        <a class="navbar-brand ps-3" href="../dashboard.php">APT. Yurikha Farma</a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
                 class="fas fa-bars"></i></button>
@@ -40,7 +40,7 @@
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item" href="#!">Logout</a></li>
+                    <li><a class="dropdown-item" href="../function/auth/logout.php">Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -50,7 +50,7 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" href="../index.php">
+                        <a class="nav-link" href="../admin/dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-home-alt"></i></div>
                             Beranda
                         </a>
@@ -63,7 +63,7 @@
                         <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
                             data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                <a class="nav-link" href="../user.php">
+                                <a class="nav-link" href="user.php">
                                     User
                                 </a>
                                 <a class="nav-link" href="../supplier/supplier.php">
@@ -85,7 +85,7 @@
                                 </div>
                             </nav>
                         </div>
-                        <a class="nav-link" href="transaksi-pembelian.php">
+                        <a class="nav-link" href="../pembelian/index.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
                             Transaksi Pembelian
                         </a>

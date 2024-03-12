@@ -25,10 +25,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Check if username and password are valid
         if (mysqli_num_rows($result) == 1) {
+            $user = mysqli_fetch_assoc($result);
             // Set session variables
             $_SESSION["username"] = $username;
+            $_SESSION["name"] = $user["nama"];
+            $_SESSION["id"] = $user["id"];
             // Redirect to dashboard
-            header("Location: ../../dashboard.php");
+            header("Location: ../../admin/dashboard.php");
             exit(); // exit script after redirection
         } else {
             // Invalid credentials, redirect back to login page

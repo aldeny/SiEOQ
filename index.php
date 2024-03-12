@@ -1,6 +1,11 @@
 <?php
-    session_start();
+session_start();
 
+    // Check if user is already logged in, redirect to dashboard
+    if(isset($_SESSION['username'])) {
+        header("Location: admin/dashboard.php");
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -15,18 +20,29 @@
     <title>Login</title>
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
 </head>
 
-<body class="bg-primary">
+<body class="bg-info">
     <div id="layoutAuthentication">
         <div id="layoutAuthentication_content">
-            <main>
+            <main class="">
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-lg-5">
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header">
-                                    <h3 class="text-center font-weight-light my-4">Login</h3>
+                                    <h4 class="text-center font-weight-light my-4">Login</h4>
+                                    <h2 class="text-center font-weight-light my-4 text-uppercase">apotek yurikha
+                                        farma
+                                    </h2>
                                     <?php
                                         if (isset($_SESSION['error'])) {
                                             echo '
@@ -44,7 +60,7 @@
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="user" name="username" type="text"
                                                 placeholder="name@example.com" />
-                                            <label for="username">Email address</label>
+                                            <label for="username">Username</label>
                                         </div>
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="password" name="password" type="password"
@@ -52,7 +68,9 @@
                                             <label for="password">Password</label>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                            <button type="submit" class="btn btn-primary">Login</button>
+                                            <button type="submit" class="btn btn-primary">Login
+                                                <i class="bi bi-door-open"></i>
+                                            </button>
                                         </div>
                                     </form>
                                 </div>

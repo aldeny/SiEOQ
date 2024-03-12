@@ -1,3 +1,14 @@
+<?php
+    session_start();
+
+    // Check if user is not logged in, redirect to login page
+    if (!isset($_SESSION['username'])) {
+        header("Location: create.php");
+        exit();
+    }
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,13 +18,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Obat - apt yurikha farma</title>
+    <title>Pembelian - apt yurikha farma</title>
     <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <!-- bootstrap icon -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Select2 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
@@ -24,31 +34,24 @@
 <body class=" sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="../index.php">APT. Yurikha Farma</a>
+        <a class="navbar-brand ps-3" href="../admin/dashboard.php">APT. Yurikha Farma</a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
                 class="fas fa-bars"></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..."
-                    aria-describedby="btnNavbarSearch" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i
-                        class="fas fa-search"></i></button>
-            </div>
-        </form>
-        <!-- Navbar-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+
+        <ul class="navbar-nav d-flex ms-auto me-0 me-md-3 my-2 my-md-0">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    aria-expanded="false"> <?php echo $_SESSION['name'] ?>
+                    <i class="fas fa-user fa-fw"></i>
+                </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#!">Settings</a></li>
                     <li><a class="dropdown-item" href="#!">Activity Log</a></li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item" href="#!">Logout</a></li>
+                    <li><a class="dropdown-item" href="../function/auth/logout.php">Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -58,7 +61,7 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" href="../index.php">
+                        <a class="nav-link" href="../admin/dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-home-alt"></i></div>
                             Beranda
                         </a>
@@ -86,7 +89,7 @@
                                 <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
                                     data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="index.php">Data Obat</a>
+                                        <a class="nav-link" href="../obat/index.php">Data Obat</a>
                                         <a class="nav-link" href="../kategori-obat/index.php">Data Kategori</a>
                                         <a class="nav-link" href="../satuan/index.php">Data Satuan</a>
                                     </nav>
@@ -153,9 +156,19 @@
                             unset($_SESSION['error']);
                         }
 
+                        function generateKodeTrans() {
+                            $prefix = 'KD-TRSB';
+                            $random_number = mt_rand(0, 99999999999);
+                            $random_number_padded = str_pad($random_number, 11, '0', STR_PAD_LEFT);
+                            $product_code = $prefix . $random_number_padded;
+                            return $product_code;
+                        }
+
                         include '../koneksi.php';
 
                         $data_obat = mysqli_query($koneksi, "SELECT * FROM produk");
+                        $data_satuan = mysqli_query($koneksi, "SELECT * FROM satuan");
+                        $data_supplier = mysqli_query($koneksi, "SELECT * FROM supplier");
                         
                     ?>
                     <div class="row">
@@ -168,10 +181,25 @@
                                 <div class="card-body">
                                     <form action="">
                                         <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label for="obat" class="form-label">Obat</label>
+                                            <div class="col-md-4 mb-4">
+                                                <label for="kd_transaksi" class="form-label">Kode Transaksi</label>
+                                                <input type="text" class="form-control" id="kd_transaksi"
+                                                    name="kd_transaksi" value="<?= generateKodeTrans() ?>" readonly
+                                                    required>
+                                            </div>
+                                            <div class="col-md-4 mb-4">
+                                                <label for="tgl" class="form-label">Tanggal</label>
+                                                <input type="date" class="form-control" id="tgl" name="tgl" required>
+                                            </div>
+                                            <div class="col-md-4 mb-4">
+                                                <label for="user" class="form-label">Data User - Hak Akses</label>
+                                                <input type="text" class="form-control" id="user" name="user" value="<?php if (isset($_SESSION['id']) == 1) 
+                                                { echo "Apoteker";} else {echo "Admin";} ?>" readonly required>
+                                            </div>
+                                            <div class="col-md-4 mb-4">
+                                                <label for="obat" class="form-label">Data Obat</label>
                                                 <select class="form-select test" id="obat" name="obat"
-                                                    aria-label="Default select example">
+                                                    aria-label="Default select example" required>
                                                     <option selected>Pilih Data Obat</option>
                                                     <?php
                                                     while ($row = mysqli_fetch_array($data_obat)) {
@@ -183,8 +211,61 @@
                                                     <?php } ?>
                                                 </select>
                                             </div>
-                                            <div class="col-md-6 mb-3">
+                                            <div class="col-md-2 mb-4">
+                                                <label for="stock_in" class="form-label">Stock Masuk</label>
+                                                <input type="number" class="form-control" id="stock_in" name="stock_in"
+                                                    min="0" onkeyup="updateTotal()" placeholder="0" required>
                                             </div>
+                                            <div class="col-md-2 mb-4">
+                                                <label for="satuan" class="form-label">Satuan</label>
+                                                <select class="form-select satuan" id="satuan" name="satuan"
+                                                    aria-label="Default select example" required>
+                                                    <option selected>Pilih Satuan</option>
+                                                    <?php
+                                                    while ($item = mysqli_fetch_array($data_satuan)) {
+                                                ?>
+                                                    <option value="<?php echo $item['id']; ?>">
+                                                        <?php echo $item['nama_satuan']; ?>
+                                                    </option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4 mb-4">
+                                                <label for="supplier" class="form-label">Supplier</label>
+                                                <select class="form-select supplier" id="supplier" name="supplier"
+                                                    aria-label="Default select example" required>
+                                                    <option selected>Pilih Supplier</option>
+                                                    <?php
+                                                    while ($sup = mysqli_fetch_array($data_supplier)) {
+                                                ?>
+                                                    <option value="<?php echo $sup['id']; ?>">
+                                                        <?php echo $sup['kode_sup']; ?> -
+                                                        <?php echo $sup['nama_sup']; ?>
+                                                    </option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-4">
+                                                <label for="harga" class="form-label">Harga Obat</label>
+                                                <input class="form-control" id="harga" name="harga" type="text"
+                                                    placeholder="Rp.000.00" onkeyup="formatRupiah(this);updateTotal()"
+                                                    required />
+                                            </div>
+                                            <div class="col-md-6 mb-4">
+                                                <label for="total" class="form-label">Total Harga</label>
+                                                <input class="form-control" id="total" name="total" type="text"
+                                                    placeholder="Rp.000.00" required readonly />
+                                            </div>
+                                            <div class="col mb-4">
+                                                <label for="keterangan" class="form-label">Keterangan</label>
+                                                <textarea class="form-control" name="keterangan" id="keterangan"
+                                                    cols="30" rows="10" placeholder="Masukkan Keterangan"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <button type="submit" class="btn btn-xs btn-primary btn-sm">Tambah <i
+                                                    class="bi bi-save"></i>
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
@@ -221,6 +302,12 @@
             $('.test').select2({
                 theme: 'bootstrap-5'
             });
+            $('.satuan').select2({
+                theme: 'bootstrap-5'
+            });
+            $('.supplier').select2({
+                theme: 'bootstrap-5'
+            });
         });
     </script>
 
@@ -239,6 +326,29 @@
 
             rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
             angka.value = rupiah;
+        }
+
+        function updateTotal() {
+            var total = document.getElementById('harga').value;
+            total = total.replace(/[^\d]/g, '');
+            total = parseInt(total);
+            console.log(total);
+            var stock_in = document.getElementById('stock_in').value;
+            stock_in = stock_in.replace(/[^\d]/g, '');
+            stock_in = parseInt(stock_in);
+            console.log(stock_in);
+
+            $total_harga = total * stock_in;
+            console.log($total_harga);
+
+            document.getElementById('total').value = rupiahTotal($total_harga);
+        }
+
+        function rupiahTotal(angka) {
+            var reverse = angka.toString().split('').reverse().join('');
+            var ribuan = reverse.match(/\d{1,3}/g);
+            var formatted = ribuan.join('.').split('').reverse().join('');
+            return formatted;
         }
     </script>
 </body>

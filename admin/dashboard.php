@@ -6,6 +6,7 @@
         header("Location: index.php");
         exit();
     }
+
 ?>
 
 <!DOCTYPE html>
@@ -19,14 +20,14 @@
     <meta name="author" content="" />
     <title>sistem - apt yurikha farma</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-    <link href="css/styles.css" rel="stylesheet" />
+    <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="index.php">APT. Yurikha Farma</a>
+        <a class="navbar-brand ps-3" href="dashboard.php">APT. Yurikha Farma</a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
                 class="fas fa-bars"></i></button>
@@ -50,7 +51,7 @@
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item" href="function/auth/logout.php">Logout</a></li>
+                    <li><a class="dropdown-item" href="../function/auth/logout.php">Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -60,7 +61,7 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" href="index.php">
+                        <a class="nav-link" href="dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-home-alt"></i></div>
                             Beranda
                         </a>
@@ -73,10 +74,10 @@
                         <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
                             data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                <a class="nav-link" href="user/user.php">
+                                <a class="nav-link" href="../user/user.php">
                                     User
                                 </a>
-                                <a class="nav-link" href="supplier/supplier.php">
+                                <a class="nav-link" href="../supplier/supplier.php">
                                     Supplier
                                 </a>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
@@ -88,14 +89,14 @@
                                 <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
                                     data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="obat/index.php">Data Obat</a>
-                                        <a class="nav-link" href="kategori-obat/index.php">Data Kategori</a>
-                                        <a class="nav-link" href="satuan/index.php">Data Satuan</a>
+                                        <a class="nav-link" href="../obat/index.php">Data Obat</a>
+                                        <a class="nav-link" href="../kategori-obat/index.php">Data Kategori</a>
+                                        <a class="nav-link" href="../satuan/index.php">Data Satuan</a>
                                     </nav>
                                 </div>
                             </nav>
                         </div>
-                        <a class="nav-link" href="pembelian/index.php">
+                        <a class="nav-link" href="../pembelian/index.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
                             Transaksi Pembelian
                         </a>
@@ -148,7 +149,7 @@
                         <div class="col-xl-3 col-md-6">
                             <div class="card bg-info text-white mb-4 shadow">
                                 <?php 
-                                    include 'koneksi.php';
+                                    include '../koneksi.php';
                                     $query = mysqli_query($koneksi, "SELECT COUNT(id) AS total FROM supplier");
                                     $data = mysqli_fetch_assoc($query);
                                     $total = $data['total'];
@@ -156,7 +157,7 @@
                                 <div class="card-body fw-bold">Supplier</div>
                                 <h1 class="text-center"><?= $total ?></h1>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="supplier/supplier.php">View
+                                    <a class="small text-white stretched-link" href="../supplier/supplier.php">View
                                         Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
@@ -165,7 +166,7 @@
                         <div class="col-xl-3 col-md-6">
                             <div class="card bg-danger shadow text-white mb-4">
                                 <?php
-                                    include 'koneksi.php';
+                                    include '../koneksi.php';
                                     $query = mysqli_query($koneksi, "SELECT COUNT(id) AS total FROM produk");
                                     $data = mysqli_fetch_assoc($query);
                                     $total = $data['total'];
@@ -173,7 +174,7 @@
                                 <div class="card-body fw-bold">Total Obat</div>
                                 <h1 class="text-center"><?= $total ?></h1>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="obat/index.php">View Details</a>
+                                    <a class="small text-white stretched-link" href="../obat/index.php">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
@@ -249,13 +250,13 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
     </script>
-    <script src="js/scripts.js"></script>
+    <script src="../js/scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
     <script src="assets/demo/chart-area-demo.js"></script>
     <script src="assets/demo/chart-bar-demo.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
         crossorigin="anonymous"></script>
-    <script src="js/datatables-simple-demo.js"></script>
+    <script src="../js/datatables-simple-demo.js"></script>
 </body>
 
 </html>
