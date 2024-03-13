@@ -104,7 +104,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-box-archive"></i></div>
                             Data Pembelian
                         </a>
-                        <a class="nav-link" href="transaksi-penjualan.php">
+                        <a class="nav-link" href="../transaksi-penjualan.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-cart-arrow-down"></i></div>
                             Transaksi Penjualan
                         </a>
@@ -180,8 +180,15 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-dark text-white mb-4">
+                            <div class="card bg-primary text-white mb-4">
+                                <?php
+                                    include '../koneksi.php';
+                                    $query = mysqli_query($koneksi, "SELECT COUNT(id) AS total FROM transaksi_pembelian");
+                                    $data = mysqli_fetch_assoc($query);
+                                    $total = $data['total'];
+                                ?>
                                 <div class="card-body">Data Pembelian</div>
+                                <h1 class="text-center"><?= $total ?></h1>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
                                     <a class="small text-white stretched-link" href="#">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>

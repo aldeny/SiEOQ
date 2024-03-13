@@ -29,8 +29,6 @@
         href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 </head>
 
-<?php session_start(); ?>
-
 <body class=" sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
@@ -166,8 +164,7 @@
 
                         include '../koneksi.php';
 
-                        $data_obat = mysqli_query($koneksi, "SELECT * FROM produk");
-                        $data_satuan = mysqli_query($koneksi, "SELECT * FROM satuan");
+                        $data_obat = mysqli_query($koneksi, "SELECT p.*, s.nama_satuan FROM produk AS p INNER JOIN satuan AS s ON p.satuan_id = s.id");
                         $data_supplier = mysqli_query($koneksi, "SELECT * FROM supplier");
                         
                     ?>
@@ -179,7 +176,7 @@
                                     Transaksi Pembelian
                                 </div>
                                 <div class="card-body">
-                                    <form action="">
+                                    <form action="../function/pembelian/save.php" method="POST">
                                         <div class="row">
                                             <div class="col-md-4 mb-4">
                                                 <label for="kd_transaksi" class="form-label">Kode Transaksi</label>
@@ -193,12 +190,15 @@
                                             </div>
                                             <div class="col-md-4 mb-4">
                                                 <label for="user" class="form-label">Data User - Hak Akses</label>
-                                                <input type="text" class="form-control" id="user" name="user" value="<?php if (isset($_SESSION['id']) == 1) 
-                                                { echo "Apoteker";} else {echo "Admin";} ?>" readonly required>
+                                                <input type="text" id="user_id" name="user_id"
+                                                    value="<?php echo $_SESSION['id']; ?>" hidden>
+                                                <input type="text" class="form-control" id="user" name="user"
+                                                    value="<?php echo $_SESSION['name']; ?>" readonly required>
                                             </div>
-                                            <div class="col-md-4 mb-4">
-                                                <label for="obat" class="form-label">Data Obat</label>
-                                                <select class="form-select test" id="obat" name="obat"
+                                            <div class="col-md-8 mb-4">
+                                                <label for="obat_id" class="form-label">Kode Obat - Nama Obat -
+                                                    Satuan</label>
+                                                <select class="form-select test" id="obat_id" name="obat_id"
                                                     aria-label="Default select example" required>
                                                     <option selected>Pilih Data Obat</option>
                                                     <?php
@@ -206,33 +206,28 @@
                                                 ?>
                                                     <option value="<?php echo $row['id']; ?>">
                                                         <?php echo $row['kode_obat']; ?> -
-                                                        <?php echo $row['nama_obat']; ?>
+                                                        <?php echo $row['nama_obat']; ?> -
+                                                        <?php echo $row['nama_satuan']; ?>
                                                     </option>
                                                     <?php } ?>
                                                 </select>
+                                            </div>
+                                            <div class="col-md-2 mb-4">
+                                                <label for="satuan_id" class="form-label">Satuan</label>
+                                                <input type="text" class="form-control" id="satuan_id" name="satuan_id"
+                                                    hidden>
+                                                <input type="text" class="form-control" id="nama_satuan"
+                                                    name="nama_satuan" readonly>
                                             </div>
                                             <div class="col-md-2 mb-4">
                                                 <label for="stock_in" class="form-label">Stock Masuk</label>
                                                 <input type="number" class="form-control" id="stock_in" name="stock_in"
                                                     min="0" onkeyup="updateTotal()" placeholder="0" required>
                                             </div>
-                                            <div class="col-md-2 mb-4">
-                                                <label for="satuan" class="form-label">Satuan</label>
-                                                <select class="form-select satuan" id="satuan" name="satuan"
-                                                    aria-label="Default select example" required>
-                                                    <option selected>Pilih Satuan</option>
-                                                    <?php
-                                                    while ($item = mysqli_fetch_array($data_satuan)) {
-                                                ?>
-                                                    <option value="<?php echo $item['id']; ?>">
-                                                        <?php echo $item['nama_satuan']; ?>
-                                                    </option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-4 mb-4">
-                                                <label for="supplier" class="form-label">Supplier</label>
-                                                <select class="form-select supplier" id="supplier" name="supplier"
+
+                                            <div class="col-md-8 mb-4">
+                                                <label for="supplier_id" class="form-label">Supplier</label>
+                                                <select class="form-select supplier" id="supplier_id" name="supplier_id"
                                                     aria-label="Default select example" required>
                                                     <option selected>Pilih Supplier</option>
                                                     <?php
@@ -245,13 +240,13 @@
                                                     <?php } ?>
                                                 </select>
                                             </div>
-                                            <div class="col-md-6 mb-4">
+                                            <div class="col-md-2 mb-4">
                                                 <label for="harga" class="form-label">Harga Obat</label>
                                                 <input class="form-control" id="harga" name="harga" type="text"
                                                     placeholder="Rp.000.00" onkeyup="formatRupiah(this);updateTotal()"
                                                     required />
                                             </div>
-                                            <div class="col-md-6 mb-4">
+                                            <div class="col-md-2 mb-4">
                                                 <label for="total" class="form-label">Total Harga</label>
                                                 <input class="form-control" id="total" name="total" type="text"
                                                     placeholder="Rp.000.00" required readonly />
@@ -294,6 +289,7 @@
     </script>
     <script src="../js/scripts.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
@@ -307,6 +303,23 @@
             });
             $('.supplier').select2({
                 theme: 'bootstrap-5'
+            });
+
+            //get satuan
+            $('#obat_id').change(function () {
+                var obat_id = $(this).val();
+                $.ajax({
+                    url: '../function/pembelian/get_satuan.php', // Ganti dengan alamat file PHP Anda yang akan memproses permintaan
+                    method: 'POST',
+                    data: {
+                        obat_id: obat_id
+                    },
+                    success: function (response) {
+                        var data = JSON.parse(response);
+                        $('#satuan_id').val(data.satuan_id);
+                        $('#nama_satuan').val(data.nama_satuan);
+                    }
+                });
             });
         });
     </script>

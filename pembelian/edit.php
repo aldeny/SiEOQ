@@ -27,6 +27,10 @@
     <link href="//cdn.datatables.net/2.0.1/css/dataTables.dataTables.min.css" />
     <!-- bootstrap icon -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
 </head>
 
@@ -175,71 +179,144 @@
 
                         include '../koneksi.php';
 
+                        // Mengambil data transaksi pembelian
+                        $id = $_GET['id'];
+
                         $query = mysqli_query($koneksi, 
                         "SELECT tp.*, p.nama_obat, u.nama, s.nama_satuan, sup.nama_sup FROM transaksi_pembelian AS tp 
                         INNER JOIN produk AS p ON tp.produk_id = p.id
                         INNER JOIN user as u ON tp.user_id = u.id
                         INNER JOIN satuan as s ON tp.satuan_id = s.id
                         INNER JOIN supplier as sup ON tp.sup_id = sup.id
+                        WHERE tp.id = '$id'
                         ORDER BY tp.tanggal DESC;");
+
+                        $data = mysqli_fetch_array($query);
                     ?>
-                    <div class="card mb-4">
-                        <div class="card-header ">
-                            <i class="bi bi-receipt-cutoff"></i>
-                            Data Transaksi Pembelian
+                    <div class="row">
+                        <div class="section_content section_content--p30">
+                            <div class="card mb-3 shadow">
+                                <div class="card-header bg-warning text-dark fw-bold">
+                                    <i class="bi bi-receipt-cutoff"></i>
+                                    Update Transaksi Pembelian
+                                </div>
+                                <div class="card-body">
+                                    <form action="../function/pembelian/update.php" method="POST">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-4">
+                                                <label for="kd_transaksi" class="form-label">Kode Transaksi</label>
+                                                <input type="text" id="id" name="id" value="<?php echo $data['id']; ?>"
+                                                    hidden>
+                                                <input type="text" class="form-control" id="kd_transaksi"
+                                                    name="kd_transaksi" value="<?php echo $data['kode_transaksi']; ?>"
+                                                    disabled>
+                                            </div>
+                                            <div class="col-md-4 mb-4">
+                                                <label for="tgl" class="form-label">Tanggal</label>
+                                                <input type="date" class="form-control" id="tgl" name="tgl"
+                                                    value="<?php echo $data['tanggal']; ?>" required>
+                                            </div>
+                                            <div class="col-md-4 mb-4">
+                                                <label for="user" class="form-label">Data User - Hak Akses</label>
+                                                <input type="text" id="user_id" name="user_id"
+                                                    value="<?php echo $_SESSION['id']; ?>" hidden>
+                                                <input type="text" class="form-control" id="user" name="user"
+                                                    value="<?php echo $_SESSION['name']; ?>" disabled>
+                                            </div>
+                                            <div class="col-md-8 mb-4">
+                                                <label for="obat_id" class="form-label">Kode Obat - Nama Obat -
+                                                    Satuan</label>
+                                                <input type="text" id="obat_id" name="obat_id"
+                                                    value="<?php echo $data['produk_id']; ?>" hidden>
+                                                <select class="form-select test" aria-label="Default select example"
+                                                    required disabled>
+                                                    <option selected>Pilih Data Obat</option>
+                                                    <?php
+                                                    $data_obat = mysqli_query($koneksi, "SELECT p.*, s.nama_satuan FROM produk AS p INNER JOIN satuan AS s ON p.satuan_id = s.id");
+                                                    while ($row = mysqli_fetch_array($data_obat)) {
+                                                ?>
+                                                    <option value="<?php echo $row['id']; ?>"
+                                                        <?php if ($row['id'] == $data['produk_id']) { echo 'selected'; } ?>>
+                                                        <?php echo $row['kode_obat']; ?> -
+                                                        <?php echo $row['nama_obat']; ?> -
+                                                        <?php echo $row['nama_satuan']; ?>
+                                                    </option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2 mb-4">
+                                                <label for="stock_in" class="form-label">Stock Masuk</label>
+                                                <input type="text" id="stock_old" name="stock_old"
+                                                    value="<?php echo $data['stock_in']; ?>" hidden>
+                                                <input type="number" class="form-control" id="stock_in" name="stock_in"
+                                                    value="<?php echo $data['stock_in']; ?>" min="0"
+                                                    onkeyup="updateTotal()" placeholder="0" required>
+                                            </div>
+                                            <div class="col-md-2 mb-4">
+                                                <label for="satuan_id" class="form-label">Satuan</label>
+                                                <input type="text" id="satuan_id" name="satuan_id" hidden
+                                                    value="<?php echo $data['satuan_id']; ?>">
+                                                <select class="form-select satuan" aria-label="Default select example"
+                                                    required disabled>
+                                                    <option selected>Pilih Satuan</option>
+                                                    <?php
+                                                    $data_satuan = mysqli_query($koneksi, "SELECT * FROM satuan");
+                                                    while ($item = mysqli_fetch_array($data_satuan)) {
+                                                ?>
+                                                    <option value="<?php echo $item['id']; ?>"
+                                                        <?php if ($item['id'] == $data['satuan_id']) { echo 'selected'; } ?>>
+                                                        <?php echo $item['nama_satuan']; ?>
+                                                    </option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-8 mb-4">
+                                                <label for="supplier_id" class="form-label">Supplier</label>
+                                                <select class="form-select supplier" id="supplier_id" name="supplier_id"
+                                                    aria-label="Default select example" required>
+                                                    <option selected>Pilih Supplier</option>
+                                                    <?php
+                                                    $data_supplier = mysqli_query($koneksi, "SELECT * FROM supplier");
+                                                    while ($sup = mysqli_fetch_array($data_supplier)) {
+                                                ?>
+                                                    <option value="<?php echo $sup['id']; ?>"
+                                                        <?php if ($sup['id'] == $data['sup_id']) { echo 'selected'; } ?>>
+                                                        <?php echo $sup['kode_sup']; ?> -
+                                                        <?php echo $sup['nama_sup']; ?>
+                                                    </option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2 mb-4">
+                                                <label for="harga" class="form-label">Harga Obat</label>
+                                                <input class="form-control" id="harga" name="harga" type="text"
+                                                    value="<?= $data['harga'] ?>" placeholder="Rp.000.00"
+                                                    onkeyup="formatRupiah(this);updateTotal()" required />
+                                            </div>
+                                            <div class="col-md-2 mb-4">
+                                                <label for="total" class="form-label">Total Harga</label>
+                                                <input class="form-control" id="total" name="total" type="text"
+                                                    value="<?= $data['total_harga'] ?>" placeholder="Rp.000.00" required
+                                                    readonly />
+                                            </div>
+                                            <div class="col mb-4">
+                                                <label for="keterangan" class="form-label">Keterangan</label>
+                                                <textarea class="form-control" name="keterangan" id="keterangan"
+                                                    cols="30" rows="10"
+                                                    placeholder="Masukkan Keterangan"><?= $data['keterangan'] ?></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <button type="submit" class="btn btn-xs btn-warning btn-sm">Update <i
+                                                    class="bi bi-save"></i>
+                                            </button>
+                                            <a href="index.php" class="btn btn-xs btn-secondary btn-sm">Cancel</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <a href="create.php" class="btn btn-sm btn-primary text-white mb-4"><i
-                                    class="bi bi-plus-circle-fill"></i>
-                                Tambah Transaksi Pembelian</a>
-                            <table id="tbl_pembelian" class="table table-bordered nowrap" style="width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th>KD transaksi</th>
-                                        <th>User</th>
-                                        <th>Produk</th>
-                                        <th>Stock In</th>
-                                        <th>Satuan</th>
-                                        <th>Harga</th>
-                                        <th>Total Harga</th>
-                                        <th>Supplier</th>
-                                        <th>Ket</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Query php -->
-                                    <?php
-                                        while ($data = mysqli_fetch_array($query)) {
-                                            ?>
-                                    <tr>
-                                        <td><?= $data['kode_transaksi'] ?></td>
-                                        <td><?= $data['nama'] ?></td>
-                                        <td><?= $data['nama_obat'] ?></td>
-                                        <td><?= $data['stock_in'] ?></td>
-                                        <td><?= $data['nama_satuan'] ?></td>
-                                        <td><?php echo 'Rp ' . number_format($data['harga'], 0, ',', '.'); ?></td>
-                                        <td><?php echo 'Rp ' . number_format($data['total_harga'], 0, ',', '.'); ?></td>
-                                        <td><?= $data['nama_sup'] ?></td>
-                                        <td><?= $data['keterangan'] ?></td>
-                                        <td>
-                                            <a class="btn btn-xs btn-warning btn-sm"
-                                                href="edit.php?id=<?= $data['id'] ?>">Edit</a>
-                                            <a class="btn btn-xs btn-danger btn-sm"
-                                                onclick="confirmDelete(<?php echo $data['id'] ?>)">
-                                                Hapus
-                                            </a>
-                                        </td>
-                                    </tr>
 
-                                    <?php
-                                        }
-                                        ?>
-                                    <!-- End Query php -->
-
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
             </main>
@@ -289,64 +366,60 @@
     <script src="../js/jquery.v371.js"></script>
     <script src="//cdn.datatables.net/2.0.1/js/dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.7/dist/sweetalert2.all.min.js"></script>
-
-    <?php if(@$_SESSION['sukses']){ ?>
-
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Sukses',
-            text: 'data berhasil dihapus',
-            timer: 3000,
-            showConfirmButton: false
-        })
-    </script>
-    <!-- jangan lupa untuk menambahkan unset agar sweet alert tidak muncul lagi saat do refresh -->
-    <?php unset($_SESSION['sukses']); } ?>
-
-    <script>
-        function confirmDelete(id) {
-            Swal.fire({
-                title: 'Konfirmasi',
-                text: 'Apakah Anda yakin ingin menghapus data ini?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Hapus!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Redirect ke halaman penghapusan data jika dikonfirmasi
-                    window.location.href = '../function/pembelian/delete.php?id=' + id;
-                }
-            });
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
         $(document).ready(function () {
-            $('#tbl_pembelian').DataTable({
-                scrollX: true
+            $('.test').select2({
+                theme: 'bootstrap-5'
+            });
+            $('.satuan').select2({
+                theme: 'bootstrap-5'
+            });
+            $('.supplier').select2({
+                theme: 'bootstrap-5'
             });
         });
+    </script>
 
-        // Fungsi untuk memformat angka ke dalam format rupiah
+    <script>
         function formatRupiah(angka) {
-            var number_string = angka.toString().replace(/[^,\d]/g, ''),
+            var number_string = angka.value.replace(/[^,\d]/g, '').toString(),
                 split = number_string.split(','),
                 sisa = split[0].length % 3,
                 rupiah = split[0].substr(0, sisa),
                 ribuan = split[0].substr(sisa).match(/\d{3}/gi);
 
-            // tambahkan titik jika yang di input sudah menjadi angka ribuan
             if (ribuan) {
                 separator = sisa ? '.' : '';
                 rupiah += separator + ribuan.join('.');
             }
 
             rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-            return 'Rp ' + rupiah;
+            angka.value = rupiah;
+        }
+
+        function updateTotal() {
+            var total = document.getElementById('harga').value;
+            total = total.replace(/[^\d]/g, '');
+            total = parseInt(total);
+            console.log(total);
+            var stock_in = document.getElementById('stock_in').value;
+            stock_in = stock_in.replace(/[^\d]/g, '');
+            stock_in = parseInt(stock_in);
+            console.log(stock_in);
+
+            $total_harga = total * stock_in;
+            console.log($total_harga);
+
+            document.getElementById('total').value = rupiahTotal($total_harga);
+        }
+
+        function rupiahTotal(angka) {
+            var reverse = angka.toString().split('').reverse().join('');
+            var ribuan = reverse.match(/\d{1,3}/g);
+            var formatted = ribuan.join('.').split('').reverse().join('');
+            return formatted;
         }
     </script>
 
