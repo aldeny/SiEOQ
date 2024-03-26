@@ -1,3 +1,14 @@
+<?php
+    session_start();
+
+    // Check if user is not logged in, redirect to login page
+    if (!isset($_SESSION['username'])) {
+        header("Location: user.php");
+        exit();
+    }
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,15 +21,12 @@
     <title>Obat - apt yurikha farma</title>
     <link href="../css/datatables.bootstrap.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
-    <link href="../css/bootsrap.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <!-- jquery -->
     <link href="//cdn.datatables.net/2.0.1/css/dataTables.dataTables.min.css" />
     <!-- bootstrap icon -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
-
-<?php session_start(); ?>
 
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -27,20 +35,12 @@
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
                 class="fas fa-bars"></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..."
-                    aria-describedby="btnNavbarSearch" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i
-                        class="fas fa-search"></i></button>
-            </div>
-        </form>
-        <!-- Navbar-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <ul class="navbar-nav d-flex ms-auto me-0 me-md-3 my-2 my-md-0">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    aria-expanded="false"> <?php echo $_SESSION['name'] ?>
+                    <i class="fas fa-user fa-fw"></i>
+                </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#!">Settings</a></li>
                     <li><a class="dropdown-item" href="#!">Activity Log</a></li>
@@ -61,8 +61,8 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-home-alt"></i></div>
                             Beranda
                         </a>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages"
-                            aria-expanded="false" aria-controls="collapsePages">
+                        <a class="nav-link active collapsed" href="#" data-bs-toggle="collapse"
+                            data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-user-group"></i></div>
                             Data
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -76,7 +76,7 @@
                                 <a class="nav-link" href="../supplier/supplier.php">
                                     Supplier
                                 </a>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                <a class="nav-link active collapsed" href="#" data-bs-toggle="collapse"
                                     data-bs-target="#pagesCollapseAuth" aria-expanded="false"
                                     aria-controls="pagesCollapseAuth">
                                     Obat
@@ -101,7 +101,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-box-archive"></i></div>
                             Data Pembelian
                         </a>
-                        <a class="nav-link" href="transaksi-penjualan.php">
+                        <a class="nav-link" href="../penjualan/index.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-cart-arrow-down"></i></div>
                             Transaksi Penjualan
                         </a>
@@ -139,7 +139,7 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h6 class="mt-4">OBAT</h6>
+                    <h6 class="mt-4">SATUAN</h6>
                     <ol class="breadcrumb mb-4"></ol>
                     <div class="section_content section_content--p30">
                         <div class="col-md-4">

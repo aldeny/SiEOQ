@@ -13,7 +13,7 @@ $role_id = $_POST['role_id'];
 mysqli_query($koneksi,"UPDATE user SET nama='$nama', username='$username', password='$password', role_id='$role_id' WHERE id='$id'");
 
 // mengalihkan halaman kembali ke index.php
-header("location:../../user.php");
+header("location:../../user/user.php");
 
 
 ?>

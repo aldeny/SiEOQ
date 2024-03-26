@@ -3,11 +3,12 @@
 
     // Check if user is not logged in, redirect to login page
     if (!isset($_SESSION['username'])) {
-        header("Location: create.php");
+        header("Location: index.php");
         exit();
     }
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +19,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Pembelian - apt yurikha farma</title>
+    <title>Penjualan - APT. Yurikha Farma</title>
+    <link href="../css/datatables.bootstrap.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <!-- bootstrap icon -->
@@ -27,6 +29,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
 </head>
 
 <body class=" sb-nav-fixed">
@@ -94,7 +97,7 @@
                                 </div>
                             </nav>
                         </div>
-                        <a class="nav-link active" href="index.php">
+                        <a class="nav-link " href="index.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
                             Transaksi Pembelian
                         </a>
@@ -103,7 +106,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-box-archive"></i></div>
                             Data Pembelian
                         </a>
-                        <a class="nav-link" href="../penjualan/index.php">
+                        <a class="nav-link active" href="../penjualan/index.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-cart-arrow-down"></i></div>
                             Transaksi Penjualan
                         </a>
@@ -141,7 +144,7 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h6 class="mt-4">PEMBELIAN</h6>
+                    <h6 class="mt-4">PENJUALAN</h6>
                     <ol class="breadcrumb mb-4"></ol>
                     <?php
                         if (isset($_SESSION['error'])) {
@@ -155,7 +158,7 @@
                         }
 
                         function generateKodeTrans() {
-                            $prefix = 'KD-TRS-B';
+                            $prefix = 'KD-TRS-J';
                             $random_number = mt_rand(0, 99999999999);
                             $random_number_padded = str_pad($random_number, 11, '0', STR_PAD_LEFT);
                             $product_code = $prefix . $random_number_padded;
@@ -173,10 +176,10 @@
                             <div class="card mb-3 shadow">
                                 <div class="card-header bg-primary text-white fw-bold">
                                     <i class="bi bi-receipt-cutoff"></i>
-                                    Transaksi Pembelian
+                                    Transaksi Penjualan
                                 </div>
                                 <div class="card-body">
-                                    <form action="../function/pembelian/save.php" method="POST">
+                                    <form action="../function/penjualan/save.php" method="POST">
                                         <div class="row">
                                             <div class="col-md-4 mb-4">
                                                 <label for="kd_transaksi" class="form-label">Kode Transaksi</label>
@@ -227,7 +230,9 @@
                                                             <th>Kode Obat</th>
                                                             <th>Satuan</th>
                                                             <th>Harga</th>
-                                                            <th>Jumlah Masuk</th>
+                                                            <th>Stock</th>
+                                                            <th>Stock Out</th>
+                                                            <th>Total Harga</th>
                                                             <th>Aksi</th>
                                                         </tr>
                                                     </thead>
@@ -266,6 +271,27 @@
             </footer>
         </div>
     </div>
+
+    <!-- Modal peringatan -->
+    <div class="modal fade" id="peringatan" tabindex="-1" aria-labelledby="peringatanLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title" id="peringatanLabel">Peringatan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="peringatan-text"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <script src="../js/scripts.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -308,7 +334,7 @@
                         <td>
                             <select class="form-select obat-select w-auto" name="obat_id[]" aria-label="Default select example" required>
                                 <option selected disabled>Pilih Obat</option>
-                                ${data.map(item => `<option value="${item.id}" data-satuan="${item.satuan_id}" data-nama="${item.nama_satuan}" data-harga="${item.harga}">${item.kode_obat} - ${item.nama_obat}</option>`).join('')}
+                                ${data.map(item => `<option value="${item.id}" data-satuan="${item.satuan_id}" data-nama="${item.nama_satuan}" data-stock="${item.stock}" data-harga="${item.harga}">${item.kode_obat} - ${item.nama_obat}</option>`).join('')}
                             </select>
                         </td>
                         <td>
@@ -317,10 +343,18 @@
                         </td>
                         <td>
                             <input type="hidden" class="form-control harga" name="harga[]" readonly>
-                            <input type="number" class="form-control harga" name="harga[]" disabled>
+                            <input type="text" class="form-control harga" name="harga[]" disabled>
+                        </td>
+                        <td>
+                            <input type="hidden" class="form-control stock" name="stock[]" readonly>
+                            <input type="number" class="form-control stock" name="stock[]" disabled>
                         </td>
                         <td>
                             <input type="number" class="form-control qty" min="1" name="qty[]" required>
+                        </td>
+                        <td>
+                            <input type="hidden" class="form-control subtotal" name="subtotal[]">
+                            <input type="text" class="form-control subtotal" name="subtotal[]" disabled>
                         </td>
                         <td>
                             <button type="button" class="btn btn-xs btn-danger btn-sm delete-row"><i class="bi bi-x-circle-fill"></i></button>
@@ -336,6 +370,9 @@
                             deleteRow($(this));
                         });
 
+                        // Deklarasikan variabel subtotalInput di luar event listener
+                        var subtotalInput;
+
                         // Tambahkan event listener untuk mengisi input satuan dan harga saat opsi obat dipilih
                         $(".obat-select").change(function () {
                             var satuanInput = $(this).closest("tr").find(
@@ -343,17 +380,62 @@
                             var namaSatuanInput = $(this).closest("tr").find(
                                 ".nama-satuan");
                             var hargaInput = $(this).closest("tr").find(".harga");
+                            var stock = $(this).closest("tr").find(".stock");
+                            subtotalInput = $(this).closest("tr").find(
+                                ".subtotal"); // Simpan nilai subtotalInput
 
                             // Ambil opsi yang dipilih
                             var selectedOption = $(this).find("option:selected");
                             var satuan = selectedOption.data("satuan");
                             var namaSatuan = selectedOption.data("nama");
                             var harga = selectedOption.data("harga");
-                            var hargaSet = selectedOption.data("setHarga");
+                            var stockAwal = selectedOption.data("stock");
+
                             satuanInput.val(satuan);
                             namaSatuanInput.val(namaSatuan);
-                            hargaInput.val(harga);
+                            hargaInput.val(formatRupiah(harga));
+                            console.log("Harga: " + formatRupiah(harga));
+                            stock.val(stockAwal);
                         });
+
+                        // Tambahkan event listener untuk memvalidasi jumlah (qty) saat nilainya berubah
+                        $(".qty").change(function () {
+                            var qtyInput = $(this);
+                            var stockInput = qtyInput.closest("tr").find(".stock");
+                            var subtotalInput = qtyInput.closest("tr").find(
+                                ".subtotal");
+                            var stock = parseInt(stockInput.val());
+                            var enteredQty = parseInt(qtyInput.val());
+
+                            if (enteredQty > stock) {
+                                // Tampilkan pesan peringatan
+                                $('#peringatan').modal('show');
+                                $('#peringatan .modal-body').text(
+                                    'Jumlah keluar melebihi stok yang tersedia.'
+                                );
+                                // reset input qty
+                                qtyInput.val(1);
+
+                            } else if (enteredQty <= 0) {
+                                // Tampilkan pesan peringatan
+                                $('#peringatan').modal('show');
+                                $('#peringatan .modal-body').text(
+                                    'Jumlah keluar harus lebih dari 0');
+                                // Atur kembali nilai qtyInput menjadi 1
+                                qtyInput.val(1);
+                            }
+
+                            // Hitung subtotal dan tampilkan
+                            var harga = parseInt(qtyInput.closest("tr").find(
+                                ".harga").val().replace(/\./g, ''));
+                            subtotalInput.val(formatRupiah(enteredQty * harga));
+                        });
+
+
+                        // Fungsi untuk mengubah nilai menjadi format rupiah
+                        function formatRupiah(angka) {
+                            return angka.toLocaleString('id-ID');
+                        }
                     },
                     error: function () {
                         alert("Terjadi kesalahan saat memuat data obat.");
@@ -363,48 +445,30 @@
         });
     </script>
 
+    <script>
+        // function updateTotal() {
+        //     var total = document.getElementById('harga').value;
+        //     total = total.replace(/[^\d]/g, '');
+        //     total = parseInt(total);
+        //     console.log(total);
+        //     var stock_out = document.getElementById('stock_out').value;
+        //     stock_out = stock_out.replace(/[^\d]/g, '');
+        //     stock_out = parseInt(stock_out);
+        //     console.log(stock_out);
 
+        //     $total_harga = total * stock_out;
+        //     console.log($total_harga);
 
-    <!-- <script>
-        function formatRupiah(angka) {
-            var number_string = angka.value.replace(/[^,\d]/g, '').toString(),
-                split = number_string.split(','),
-                sisa = split[0].length % 3,
-                rupiah = split[0].substr(0, sisa),
-                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+        //     document.getElementById('total').value = rupiahTotal($total_harga);
+        // }
 
-            if (ribuan) {
-                separator = sisa ? '.' : '';
-                rupiah += separator + ribuan.join('.');
-            }
-
-            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-            angka.value = rupiah;
-        }
-
-        function updateTotal() {
-            var total = document.getElementById('harga').value;
-            total = total.replace(/[^\d]/g, '');
-            total = parseInt(total);
-            console.log(total);
-            var stock_in = document.getElementById('stock_in').value;
-            stock_in = stock_in.replace(/[^\d]/g, '');
-            stock_in = parseInt(stock_in);
-            console.log(stock_in);
-
-            $total_harga = total * stock_in;
-            console.log($total_harga);
-
-            document.getElementById('total').value = rupiahTotal($total_harga);
-        }
-
-        function rupiahTotal(angka) {
-            var reverse = angka.toString().split('').reverse().join('');
-            var ribuan = reverse.match(/\d{1,3}/g);
-            var formatted = ribuan.join('.').split('').reverse().join('');
-            return formatted;
-        }
-    </script> -->
+        // function rupiahTotal(angka) {
+        //     var reverse = angka.toString().split('').reverse().join('');
+        //     var ribuan = reverse.match(/\d{1,3}/g);
+        //     var formatted = ribuan.join('.').split('').reverse().join('');
+        //     return formatted;
+        // }
+    </script>
 </body>
 
 </html>

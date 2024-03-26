@@ -12,7 +12,7 @@ $role_id = $_POST['role_id'];
 mysqli_query($koneksi,"INSERT INTO user values('','$nama','$username','$password','$role_id')");
 
 // kembali ke user.php
-header("location:../../user.php");
+header("location:../../user/user.php");
 
 
 ?>

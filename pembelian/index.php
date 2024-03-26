@@ -37,20 +37,13 @@
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
                 class="fas fa-bars"></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..."
-                    aria-describedby="btnNavbarSearch" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i
-                        class="fas fa-search"></i></button>
-            </div>
-        </form>
-        <!-- Navbar-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+
+        <ul class="navbar-nav d-flex ms-auto me-0 me-md-3 my-2 my-md-0">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    aria-expanded="false"> <?php echo $_SESSION['name'] ?>
+                    <i class="fas fa-user fa-fw"></i>
+                </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#!">Settings</a></li>
                     <li><a class="dropdown-item" href="#!">Activity Log</a></li>
@@ -111,7 +104,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-box-archive"></i></div>
                             Data Pembelian
                         </a>
-                        <a class="nav-link" href="transaksi-penjualan.php">
+                        <a class="nav-link" href="../penjualan/index.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-cart-arrow-down"></i></div>
                             Transaksi Penjualan
                         </a>
@@ -176,12 +169,15 @@
                         include '../koneksi.php';
 
                         $query = mysqli_query($koneksi, 
-                        "SELECT tp.*, p.nama_obat, u.nama, s.nama_satuan, sup.nama_sup FROM transaksi_pembelian AS tp 
+                        "SELECT tp.id, tp.kode_transaksi, tp.tanggal, u.nama, tp.keterangan 
+                        FROM transaksi_pembelian AS tp 
                         INNER JOIN produk AS p ON tp.produk_id = p.id
-                        INNER JOIN user as u ON tp.user_id = u.id
-                        INNER JOIN satuan as s ON tp.satuan_id = s.id
-                        INNER JOIN supplier as sup ON tp.sup_id = sup.id
-                        ORDER BY tp.tanggal DESC;");
+                        INNER JOIN user AS u ON tp.user_id = u.id
+                        INNER JOIN satuan AS s ON tp.satuan_id = s.id
+                        INNER JOIN supplier AS sup ON tp.sup_id = sup.id
+                        GROUP BY tp.kode_transaksi
+                        ORDER BY tp.tanggal DESC");
+
                     ?>
                     <div class="card mb-4">
                         <div class="card-header ">
@@ -192,17 +188,12 @@
                             <a href="create.php" class="btn btn-sm btn-primary text-white mb-4"><i
                                     class="bi bi-plus-circle-fill"></i>
                                 Tambah Transaksi Pembelian</a>
-                            <table id="tbl_pembelian" class="table table-bordered nowrap" style="width: 100%;">
+                            <table id="tbl_pembelian" class="table table-bordered table-hover" style="width: 100%;">
                                 <thead>
                                     <tr>
                                         <th>KD transaksi</th>
-                                        <th>User</th>
-                                        <th>Produk</th>
-                                        <th>Stock In</th>
-                                        <th>Satuan</th>
-                                        <th>Harga</th>
-                                        <th>Total Harga</th>
-                                        <th>Supplier</th>
+                                        <th>Tgl Pembelian</th>
+                                        <th>PIC</th>
                                         <th>Ket</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -214,21 +205,12 @@
                                             ?>
                                     <tr>
                                         <td><?= $data['kode_transaksi'] ?></td>
+                                        <td><?= date('d-m-Y', strtotime($data['tanggal'])) ?></td>
                                         <td><?= $data['nama'] ?></td>
-                                        <td><?= $data['nama_obat'] ?></td>
-                                        <td><?= $data['stock_in'] ?></td>
-                                        <td><?= $data['nama_satuan'] ?></td>
-                                        <td><?php echo 'Rp ' . number_format($data['harga'], 0, ',', '.'); ?></td>
-                                        <td><?php echo 'Rp ' . number_format($data['total_harga'], 0, ',', '.'); ?></td>
-                                        <td><?= $data['nama_sup'] ?></td>
                                         <td><?= $data['keterangan'] ?></td>
                                         <td>
-                                            <a class="btn btn-xs btn-warning btn-sm"
-                                                href="edit.php?id=<?= $data['id'] ?>">Edit</a>
-                                            <a class="btn btn-xs btn-danger btn-sm"
-                                                onclick="confirmDelete(<?php echo $data['id'] ?>)">
-                                                Hapus
-                                            </a>
+                                            <button class="btn btn-sm btn-info btn-detail"
+                                                data-kode="<?= $data['kode_transaksi'] ?>">Detail</button>
                                         </td>
                                     </tr>
 
@@ -264,15 +246,59 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header bg-info">
-                            <h5 class="modal-title fw-bold" id="staticBackdropLabel">Detail Produk/Obat</h5>
+                            <h6 class="modal-title title" id="staticBackdropLabel"></h6>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <!-- Konten modal -->
                         <div class="modal-body">
-                            <table class="table table-bordered">
-                                <tbody id="detailTableBody">
-                                    <!-- Baris-baris tabel akan ditambahkan di sini -->
+                            <table class="table table-borderless mb-4 w-auto">
+                                <thead></thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Kode Transaksi</td>
+                                        <td>:</td>
+                                        <td><span id="kodeTransaksi"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tanggal Transaksi</td>
+                                        <td>:</td>
+                                        <td><span id="tglTransaksi"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>User PIC</td>
+                                        <td>:</td>
+                                        <td><span id="pic"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Supplier</td>
+                                        <td>:</td>
+                                        <td><span id="supplier"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Keterangan</td>
+                                        <td>:</td>
+                                        <td><span id="keterangan"></span></td>
+                                    </tr>
                                 </tbody>
+                            </table>
+                            <table class="table table-bordered" id="detailTable">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Produk</th>
+                                        <th>Stock Masuk</th>
+                                        <th>Harga</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detailTableBody">
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td class="text-center fw-bold" colspan="4">Total Harga</td>
+                                        <td class="fw-bold" colspan="1" id="totalHarga"></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                         <div class="modal-footer">
@@ -291,9 +317,9 @@
     <script src="https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.7/dist/sweetalert2.all.min.js"></script>
 
-    <?php if(@$_SESSION['sukses']){ ?>
+    <!-- <?php if(@$_SESSION['sukses']){ ?> -->
 
-    <script>
+    <!-- <script>
         Swal.fire({
             icon: 'success',
             title: 'Sukses',
@@ -301,11 +327,11 @@
             timer: 3000,
             showConfirmButton: false
         })
-    </script>
+    </script> -->
     <!-- jangan lupa untuk menambahkan unset agar sweet alert tidak muncul lagi saat do refresh -->
-    <?php unset($_SESSION['sukses']); } ?>
+    <!-- <?php unset($_SESSION['sukses']); } ?> -->
 
-    <script>
+    <!-- <script>
         function confirmDelete(id) {
             Swal.fire({
                 title: 'Konfirmasi',
@@ -322,31 +348,98 @@
                 }
             });
         }
-    </script>
+    </script> -->
 
     <script>
         $(document).ready(function () {
-            $('#tbl_pembelian').DataTable({
-                scrollX: true
+            $('#tbl_pembelian').DataTable();
+
+            $(document).on('click', '.btn-detail', function () {
+                var kode = $(this).data('kode');
+                // alert(kode);
+
+                $.ajax({
+                    url: '../function/pembelian/detail.php',
+                    type: 'POST',
+                    data: {
+                        kode: kode // Mengubah 'id' menjadi 'kode' sesuai dengan parameter yang digunakan di PHP
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data);
+
+                        // Mengubah format tanggal
+                        var tgl = new Date(data[0].tanggal);
+                        var dd = String(tgl.getDate()).padStart(2, '0');
+                        var mm = String(tgl.getMonth() + 1).padStart(2,
+                            '0'); // +1 karena Januari dimulai dari 0
+                        var yyyy = tgl.getFullYear();
+                        var formattedDate = dd + '-' + mm + '-' + yyyy;
+
+                        // Mengisi data ke dalam tabel detail
+                        $('#detailModal').modal('show');
+                        $('.title').html('Detail Transaksi Pembelian');
+                        $('#kodeTransaksi').html(data[0].kode_transaksi);
+                        $('#tglTransaksi').html(formattedDate);
+                        $('#pic').html(data[0].nama);
+                        if (!data[0].keterangan) {
+                            $('#keterangan').html('Tidak ada keterangan');
+                        } else {
+                            $('#keterangan').html(data[0].keterangan);
+                        }
+                        $('#supplier').html(data[0].kode_sup + ' - ' + data[0].nama_sup);
+
+                        // Membuat variabel untuk menyimpan hasil yang akan ditampilkan
+                        var tableRows = '';
+                        var no = 1;
+                        var totalHarga = 0;
+
+                        // Loop untuk setiap baris data yang diterima
+                        for (var i = 0; i < data.length; i++) {
+                            var rowData = data[i];
+
+
+
+                            // Menambahkan baris data ke variabel tableRows
+                            tableRows += '<tr>';
+                            tableRows += '<td>' + no++ + '</td>';
+                            tableRows += '<td>' + rowData.nama_obat + '</td>';
+                            tableRows += '<td>' + rowData.stock_in + ' ' + rowData
+                                .nama_satuan + '</td>';
+                            tableRows += '<td>' + rowData.harga + '</td>';
+                            tableRows += '<td>' + rowData.total_harga + '</td>';
+                            tableRows += '</tr>';
+
+                            totalHarga += parseFloat(rowData.total_harga);
+                        }
+
+                        // Memasukkan baris-baris data ke dalam tabel dengan id 'detailTable'
+                        $('#detailTable tbody').html(tableRows);
+
+                        // Menampilkan total harga pada bagian akhir tabel
+                        $('#totalHarga').html(formatRupiah(totalHarga,
+                            'Rp '));
+                    }
+                });
             });
+
         });
 
-        // Fungsi untuk memformat angka ke dalam format rupiah
-        function formatRupiah(angka) {
+        // Fungsi untuk mengubah format angka ke format Rupiah
+        function formatRupiah(angka, prefix) {
             var number_string = angka.toString().replace(/[^,\d]/g, ''),
                 split = number_string.split(','),
                 sisa = split[0].length % 3,
                 rupiah = split[0].substr(0, sisa),
                 ribuan = split[0].substr(sisa).match(/\d{3}/gi);
 
-            // tambahkan titik jika yang di input sudah menjadi angka ribuan
             if (ribuan) {
                 separator = sisa ? '.' : '';
                 rupiah += separator + ribuan.join('.');
             }
 
-            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-            return 'Rp ' + rupiah;
+            rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix === undefined ? rupiah : (rupiah ? 'Rp ' + rupiah : '');
         }
     </script>
 

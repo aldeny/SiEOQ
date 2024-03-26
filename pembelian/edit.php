@@ -115,7 +115,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-box-archive"></i></div>
                             Data Pembelian
                         </a>
-                        <a class="nav-link" href="transaksi-penjualan.php">
+                        <a class="nav-link" href="../penjualan/index.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-cart-arrow-down"></i></div>
                             Transaksi Penjualan
                         </a>

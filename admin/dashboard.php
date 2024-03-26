@@ -3,7 +3,7 @@
 
     // Check if user is not logged in, redirect to login page
     if (!isset($_SESSION['username'])) {
-        header("Location: index.php");
+        header("Location: ../index.php");
         exit();
     }
 
@@ -31,20 +31,13 @@
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
                 class="fas fa-bars"></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..."
-                    aria-describedby="btnNavbarSearch" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i
-                        class="fas fa-search"></i></button>
-            </div>
-        </form>
-        <!-- Navbar-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+
+        <ul class="navbar-nav d-flex ms-auto me-0 me-md-3 my-2 my-md-0">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    aria-expanded="false"> <?php echo $_SESSION['name'] ?>
+                    <i class="fas fa-user fa-fw"></i>
+                </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#!">Settings</a></li>
                     <li><a class="dropdown-item" href="#!">Activity Log</a></li>
@@ -61,7 +54,7 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" href="dashboard.php">
+                        <a class="nav-link active" href="dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-home-alt"></i></div>
                             Beranda
                         </a>
@@ -104,7 +97,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-box-archive"></i></div>
                             Data Pembelian
                         </a>
-                        <a class="nav-link" href="../transaksi-penjualan.php">
+                        <a class="nav-link" href="../penjualan/index.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-cart-arrow-down"></i></div>
                             Transaksi Penjualan
                         </a>
@@ -180,26 +173,35 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
+                            <div class="card bg-primary text-white mb-4 shadow">
                                 <?php
                                     include '../koneksi.php';
-                                    $query = mysqli_query($koneksi, "SELECT COUNT(id) AS total FROM transaksi_pembelian");
+                                    $query = mysqli_query($koneksi, "SELECT COUNT(*) AS total_row FROM ( SELECT kode_transaksi FROM transaksi_pembelian GROUP BY kode_transaksi ) AS subquery;
+                                    ");
                                     $data = mysqli_fetch_assoc($query);
-                                    $total = $data['total'];
                                 ?>
-                                <div class="card-body">Data Pembelian</div>
-                                <h1 class="text-center"><?= $total ?></h1>
+                                <div class="card-body fw-bold">Data Pembelian</div>
+                                <h1 class="text-center"><?= $data['total_row'] ?></h1>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
+                                    <a class="small text-white stretched-link" href="../pembelian/index.php">View
+                                        Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-dark text-white mb-4">
-                                <div class="card-body">Data Penjualan</div>
+                            <div class="card bg-success text-white mb-4 shadow">
+                                <?php
+                                    include '../koneksi.php';
+                                    $query = mysqli_query($koneksi, "SELECT COUNT(id) AS total FROM transaksi_penjualan");
+                                    $data = mysqli_fetch_assoc($query);
+                                    $total = $data['total'];
+                                ?>
+                                <div class="card-body fw-bold">Data Penjualan</div>
+                                <h1 class="text-center"><?= $total ?></h1>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
+                                    <a class="small text-white stretched-link" href="../penjualan/index.php">View
+                                        Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
