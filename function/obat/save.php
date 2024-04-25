@@ -9,13 +9,14 @@ $kategori = $_POST['kategori'];
 $satuan = $_POST['satuan'];
 $stock = $_POST['stock'];
 $harga = $_POST['harga'];
+$biaya_penyimpanan = $_POST['biaya_penyimpanan'];
 $keterangan = $_POST['keterangan'];
 
 //hilangkan tanda pemisah harga
 $harga = str_replace(".", "", $harga);
 
 //insert data obat
-$insert = mysqli_query($koneksi, "INSERT INTO produk (kode_obat, nama_obat, kategori_id, satuan_id, stock, harga, sup_id, keterangan) VALUES ('$kode_obat', '$nama_obat', '$kategori', '$satuan', '$stock', '$harga', '$supplier', '$keterangan')");
+$insert = mysqli_query($koneksi, "INSERT INTO produk (kode_obat, nama_obat, kategori_id, satuan_id, stock, harga, biaya_penyimpanan, sup_id, keterangan) VALUES ('$kode_obat', '$nama_obat', '$kategori', '$satuan', '$stock', '$harga', '$biaya_penyimpanan', '$supplier', '$keterangan')");
 
 if ($insert) {
     // Jika insert berhasil, set session success dan kembali ke halaman sebelumnya

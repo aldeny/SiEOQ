@@ -198,11 +198,11 @@
                                 </div>
                                 <button type="submit" class="btn btn-sm btn-primary mb-4">Cari</button>
                                 <a href="report-pembelian.php" class="btn btn-sm btn-dark text-white mb-4">Reset</a>
-                                <a href="../function/exports/data-obat-exel.php"
+                                <a href="../function/exports/data-pembelian-excel.php?dari=<?= $dari ?>&sampai=<?= $sampai ?>"
                                     class="btn btn-sm btn-success text-white mb-4"><i
                                         class="bi bi-file-earmark-spreadsheet"></i>
                                     Export Excel</a>
-                                <a href="../function/exports/data-obat-pdf.php"
+                                <a href="../function/exports/data-pembelian-pdf.php?dari=<?= $dari ?>&sampai=<?= $sampai ?>"
                                     class="btn btn-sm btn-dark text-white mb-4" target="_blank"><i
                                         class="bi bi-filetype-pdf"></i>
                                     Export Pdf</a>

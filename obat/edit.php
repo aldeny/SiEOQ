@@ -245,7 +245,7 @@
                                                 <label for="satuan">Satuan</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" id="stock" name="stock"
                                                     value="<?= $data['stock'] ?>" type="text"
@@ -253,7 +253,7 @@
                                                 <label for="stock">Stock</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-floating mb-3">
                                                 <?php
                                                     $harga = $data['harga'];
@@ -263,6 +263,19 @@
                                                     placeholder="Rp.000.00" value="<?= $harga_rupiah ?>"
                                                     onkeyup="formatRupiah(this)" />
                                                 <label for="harga">Harga Obat</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-3">
+                                                <?php
+                                                    $biaya_penyimpanan = $data['biaya_penyimpanan'];
+                                                    $biaya_penyimpanan_rupiah = number_format($biaya_penyimpanan, 0, ',', '.');
+                                                ?>
+                                                <input class="form-control" id="biaya_penyimpanan"
+                                                    name="biaya_penyimpanan" type="text" placeholder="Rp.000.00"
+                                                    value="<?= $biaya_penyimpanan_rupiah ?>"
+                                                    onkeyup="formatRupiah(this)" />
+                                                <label for="biaya_penyimpanan">Biaya Penyimpanan</label>
                                             </div>
                                         </div>
                                         <div class="col-md-12">

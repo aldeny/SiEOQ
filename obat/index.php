@@ -181,6 +181,7 @@
                                         <th>Harga</th>
                                         <th>Stock</th>
                                         <th>Satuan</th>
+                                        <th>Biaya Penyimpanan</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -193,7 +194,7 @@
 
                                         $data = mysqli_query(
                                             $koneksi,
-                                            "SELECT p.id, p.nama_obat, p.kode_obat, p.stock, p.harga, p.keterangan, k.nama_kategori, s.nama_satuan, sup.nama_sup 
+                                            "SELECT p.id, p.nama_obat, p.kode_obat, p.stock, p.harga, p.biaya_penyimpanan, p.keterangan, k.nama_kategori, s.nama_satuan, sup.nama_sup 
                                             FROM produk as p 
                                             JOIN kategori AS k ON p.kategori_id = k.id
                                             JOIN satuan AS s ON p.satuan_id = s.id 
@@ -210,6 +211,8 @@
                                         <td><?php echo 'Rp ' . number_format($item['harga'], 0, ',', '.'); ?></td>
                                         <td><?php echo $item['stock'] ?></td>
                                         <td><?php echo $item['nama_satuan'] ?></td>
+                                        <td><?php echo 'Rp ' . number_format($item['biaya_penyimpanan'], 0, ',', '.'); ?>
+                                        </td>
                                         <td>
                                             <button class="btn btn-xs btn-info btn-sm btn-detail"
                                                 data-id="<?php echo $item['id'] ?>">Detail</button>

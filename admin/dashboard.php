@@ -114,16 +114,16 @@
                         <div class="collapse" id="collapseLaporan" aria-labelledby="headingOne"
                             data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav" id="sidenavAccordionLaporan">
-                                <a class="nav-link" href="laporan obat.php">
+                                <a class="nav-link" href="../reports/report-obat.php">
                                     Laporan Obat
                                 </a>
-                                <a class="nav-link" href="laporan pembelian.php">
+                                <a class="nav-link" href="../reports/report-pembelian.php">
                                     Laporan Pembelian
                                 </a>
                                 <a class="nav-link" href="laporan penjualan.php">
                                     Laporan Penjualan
                                 </a>
-                                <a class="nav-link" href="eoq.php">
+                                <a class="nav-link" href="../eoq/index.php">
                                     Economic Order Quantity
                                 </a>
                             </nav>

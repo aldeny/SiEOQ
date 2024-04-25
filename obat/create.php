@@ -234,18 +234,26 @@
                                                 <label for="satuan">Satuan</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" id="stock" name="stock" type="text"
                                                     placeholder="nameexample" />
                                                 <label for="stock">Stock</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" id="harga" name="harga" type="text"
                                                     placeholder="Rp.000.00" onkeyup="formatRupiah(this)" />
                                                 <label for="harga">Harga Obat</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-3">
+                                                <input class="form-control" id="biaya_penyimpanan"
+                                                    name="biaya_penyimpanan" type="text" placeholder="Rp.000.00"
+                                                    onkeyup="formatRupiah(this)" />
+                                                <label for="biaya_penyimpanan">Biaya Penyimpanan</label>
                                             </div>
                                         </div>
                                         <div class="col-md-12">

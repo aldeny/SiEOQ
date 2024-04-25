@@ -368,7 +368,7 @@
                                 tableRows += '<tr>';
                                 tableRows += '<td>' + no++ + '</td>';
                                 tableRows += '<td>' + rowData.nama_obat + '</td>';
-                                tableRows += '<td>' + rowData.stock_in + ' ' + rowData
+                                tableRows += '<td>' + rowData.stock_out + ' ' + rowData
                                     .nama_satuan + '</td>';
                                 tableRows += '<td>' + rowData.harga + '</td>';
                                 tableRows += '<td>' + rowData.total_harga + '</td>';
