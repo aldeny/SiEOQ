@@ -34,6 +34,8 @@
             // Menghitung pendapatan dalam rentang waktu yang di pilih
             $total_pendapatan = array_sum($data_pendapatan);
 
+            // var_dump(count($data_pendapatan));
+
             //menghitung persentase pendapatan per item
             $persen_pendapatan_produk = array();
             for ($i = 0; $i < count($data_pendapatan); $i++) {
@@ -43,17 +45,29 @@
                 $persen_pendapatan_produk[] = $persen_pendapatan;
             }
 
+            // var_dump('jumlah data persen pendapatan =' . count($persen_pendapatan_produk));
+
             // Menghitung kolom komulatif
             $komulatif = array();
             $komulatif[0] = $persen_pendapatan_produk[0];
+            // var_dump($komulatif[0]);
             for ($i = 1; $i < count($persen_pendapatan_produk); $i++) {
                 $komulatif[$i] = $komulatif[$i - 1] + $persen_pendapatan_produk[$i];
 
+                // Pastikan nilai komulatif tidak melebihi 100
+                if ($komulatif[$i] > 100) {
+                    $komulatif[$i] = 100;
+                }
+
                 //munculkan angka 2 digit di belakang koma
                 $komulatif[$i] = round($komulatif[$i], 2);
+                // var_dump('komulatif ke-' . $i . ' = ' . $komulatif[$i]);
 
             }
 
+            // var_dump($komulatif);
+            // var_dump('jumlah data komulatif =' . count($komulatif));
+            
             // Menentukan grade komulatif
             $grade_komulatif = array();
             for ($i = 0; $i < count($komulatif); $i++) {
@@ -63,10 +77,12 @@
                 if ($komulatif[$i] >= 71 && $komulatif[$i] <= 90) {
                     $grade_komulatif[] = "B";
                 }
-                if ($komulatif[$i] >= 91 && $komulatif[$i] <= 100) {
+                if ($komulatif[$i] > 91 && $komulatif[$i] <= 100) {
                     $grade_komulatif[] = "C";
                 }
             }
+
+            // var_dump('jumlah data grade komulatif =' . count($grade_komulatif));
 
             //hitung total grade komulatif yang sama
             $total_komulatif_sama = array_count_values($grade_komulatif);
