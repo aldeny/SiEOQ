@@ -232,8 +232,8 @@ if (!isset($_SESSION['username'])) {
                                                 Supplier</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $totalSupp ?>
                                             </div>
-                                            <a href="" class="btn btn-primary btn-sm mt-4">Detail <i
-                                                    class="fas fa-info-circle"></i></a>
+                                            <a href="../supplier/index.php" class="btn btn-primary btn-sm mt-4">Detail
+                                                <i class="fas fa-info-circle"></i></a>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-user-circle fa-2x text-gray-300"></i>
@@ -252,7 +252,7 @@ if (!isset($_SESSION['username'])) {
                                                 Obat / Produk</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $totalObat ?>
                                             </div>
-                                            <a href="" class="btn btn-success btn-sm mt-4">Detail <i
+                                            <a href="../obat/index.php" class="btn btn-success btn-sm mt-4">Detail <i
                                                     class="fas fa-info-circle"></i></a>
                                         </div>
                                         <div class="col-auto">
@@ -272,7 +272,7 @@ if (!isset($_SESSION['username'])) {
                                                 Pembelian</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $totalBeli ?>
                                             </div>
-                                            <a href="" class="btn btn-info btn-sm mt-4">Detail <i
+                                            <a href="../pembelian/index.php" class="btn btn-info btn-sm mt-4">Detail <i
                                                     class="fas fa-info-circle"></i></a>
                                         </div>
                                         <div class="col-auto">
@@ -292,8 +292,8 @@ if (!isset($_SESSION['username'])) {
                                                 Penjualan</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $totalJual ?>
                                             </div>
-                                            <a href="" class="btn btn-warning btn-sm mt-4">Detail <i
-                                                    class="fas fa-info-circle"></i></a>
+                                            <a href="../penjualan/index.php" class="btn btn-warning btn-sm mt-4">Detail
+                                                <i class="fas fa-info-circle"></i></a>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>

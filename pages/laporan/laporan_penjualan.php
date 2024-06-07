@@ -476,7 +476,7 @@ if (!isset($_SESSION['username'])) {
             var kode = $(this).data('kode');
 
             $.ajax({
-                url: 'detail-penjualan.php',
+                url: '../penjualan/detail-penjualan.php',
                 type: 'POST',
                 data: {
                     kode: kode
