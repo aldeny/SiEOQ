@@ -303,8 +303,12 @@ if (!isset($_SESSION['username'])) {
                                     <tbody id="data-ss">
                                     </tbody>
                                 </table>
-                            </div>
 
+                                <div class="text-center">
+                                    <button type="button" class="btn btn-secondary" id="btnPrint">Print Report <i
+                                            class="fas fa-print"></i></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- End of Content -->
@@ -376,6 +380,11 @@ if (!isset($_SESSION['username'])) {
     <!-- Script untuk fungsi crud -->
     <script>
         $(document).ready(function () {
+
+            var dataGradeA;
+            var dataEoq;
+            var dataP;
+
             $('#dataForm').submit(function (event) {
                 event.preventDefault(); // Menghentikan submit form default
 
@@ -387,141 +396,13 @@ if (!isset($_SESSION['username'])) {
                     dataType: 'json',
                     success: function (response) {
                         $("#result").show();
-                        var data = response.data;
-                        var totalPendapatan = response.total_pendapatan;
-                        var persenPendapatan = response.persen_pendapatan;
-                        var komulatif = response.komulatif;
-                        var gradeKomulatif = response.grade_komulatif;
-                        var totalGradeSama = response.total_komulatif_sama;
-                        var totalKomulatif = response.total_komulatif;
-                        var total_pendapatan_per_grade = response
-                            .total_pendapatan_per_grade;
-                        var persen_pendapatan_kelompok = response
-                            .persen_pendapatan_kelompok;
-                        var data_grade_A = response.data_grade_A;
-                        var data_eoq = response.data_eoq;
-                        var data_p = response.data_p;
+                        updateTables(response);
 
+                        // console.log(response);
 
-                        var tableBody = $('#data-table');
-                        var tableKelompok = $('#data-kelompok');
-                        var tableEoq = $('#data-eoq');
-                        var tableSs = $('#data-ss');
-                        //buat format rupiah
-                        var formatter = new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            minimumFractionDigits: 0
-                        });
-                        var html = '';
-                        var kel = '';
-                        var eoq = '';
-                        var ss = '';
-
-                        // Loop melalui data dan tambahkan ke tabel
-                        $.each(data, function (index, item) {
-                            html += '<tr>';
-                            // untuk nomor
-                            html += '<td>' + (index + 1) + '</td>';
-                            html += '<td>' + item.nama_obat + '</td>';
-                            html += '<td>' + item.nama_satuan + '</td>';
-                            html += '<td>' + item.stock_out + '</td>';
-                            html += '<td>' + formatter.format(item.harga) +
-                                '</td>';
-                            html += '<td>' + formatter.format(item.pendapatan) +
-                                '</td>';
-                            html += '<td>' + persenPendapatan[index] + '</td>';
-                            html += '<td>' + komulatif[index] + '</td>';
-                            html += '<td>' + gradeKomulatif[index] + '</td>';
-                            html += '</tr>';
-                        });
-
-                        // Tambahkan total pendapatan, persentase pendapatan, kolom komulatif, dan grade komulatif
-                        html += '<tr>';
-                        html +=
-                            '<td class="fw-bold text-center" colspan="5">Total Pendapatan:</td>';
-                        html += '<td >' + formatter.format(totalPendapatan) +
-                            '</td>';
-                        html += '</tr>';
-
-                        // looping table kelompok
-
-                        $no = 1;
-                        $.each(totalGradeSama, function (index, k) {
-                            kel += '<tr>';
-                            kel += '<td>' + $no++ + '</td>';
-                            kel += '<td>' + index + '</td>';
-                            kel += '<td>' + k + '</td>';
-                            //persentasi kelompok dalam persen dengan 2 angka di belakang koma
-                            kel += '<td>' + (k / totalKomulatif * 100).toFixed(
-                                2) + '%</td>';
-                            kel += '<td>' + formatter.format(
-                                    total_pendapatan_per_grade[index]) +
-                                '</td>';
-                            kel += '<td>' + persen_pendapatan_kelompok[index]
-                                .toFixed(2) +
-                                '%</td>';
-                            kel += '</tr>';
-                        })
-
-                        kel += '<tr>';
-                        kel +=
-                            '<td class="fw-bold text-center" colspan="2">Total</td>';
-                        kel += '<td >' + totalKomulatif +
-                            '</td>';
-                        kel += '<td >' + (totalKomulatif / totalKomulatif * 100)
-                            .toFixed(
-                                2) + '%</td>';
-                        kel += '<td >' + formatter.format(
-                                totalPendapatan) +
-                            '</td>';
-                        kel += '<td >' + (totalPendapatan / totalPendapatan * 100)
-                            .toFixed(
-                                2) + '%</td>';
-                        kel += '</tr>';
-
-                        // looping table eoq
-
-                        $no = 1;
-                        $.each(data_grade_A, function (index, e) {
-                            eoq += '<tr>';
-                            eoq += '<td>' + $no++ + '</td>';
-                            eoq += '<td>' + e.nama_obat + '</td>';
-                            eoq += '<td>' + e.stock_out + '</td>';
-                            eoq += '<td> Rp. 50.000 </td>';
-                            eoq += '<td>' + formatter.format(e
-                                .biaya_penyimpanan) + '</td>';
-                            eoq += '<td>' + data_eoq[index] + '</td>';
-                            eoq += '<td>' + data_p[index] + '</td>';
-                            eoq += '</tr>';
-                        })
-
-                        //looping data safty stock dan rop
-
-                        $.each(data_grade_A, function (index, d) {
-                            ss += '<tr>';
-                            ss += '<td>' + (index + 1) + '</td>';
-                            ss += '<td>' + d.nama_obat + '</td>';
-                            ss += '<td>' + d.stock_out + '</td>';
-                            ss += '<td>' + (d.stock_out / 365).toFixed(2) +
-                                '</td>';
-                            ss += '<td> 3 </td>';
-                            ss += '<td> 1.65 </td>';
-                            ss += '<td>' + (1.65 * (d.stock_out / 365) * 3)
-                                .toFixed(2) +
-                                '</td>';
-                            ss += '<td>' + (((d.stock_out / 365) * 3) + (1.65 *
-                                    (d.stock_out / 365) * 3)).toFixed(2) +
-                                '</td>';
-                            ss += '</tr>';
-                        })
-
-
-                        tableBody.html(html);
-                        tableKelompok.html(kel);
-                        tableEoq.html(eoq);
-                        tableSs.html(ss);
-
+                        dataGradeA = response.data_grade_A;
+                        dataEoq = response.data_eoq;
+                        dataP = response.data_p;
                     },
 
                     error: function (xhr, status, error) {
@@ -534,6 +415,153 @@ if (!isset($_SESSION['username'])) {
                     }
 
                 });
+            });
+
+            function updateTables(response) {
+                var data = response.data;
+                var totalPendapatan = response.total_pendapatan;
+                var persenPendapatan = response.persen_pendapatan;
+                var komulatif = response.komulatif;
+                var gradeKomulatif = response.grade_komulatif;
+                var totalGradeSama = response.total_komulatif_sama;
+                var totalKomulatif = response.total_komulatif;
+                var total_pendapatan_per_grade = response
+                    .total_pendapatan_per_grade;
+                var persen_pendapatan_kelompok = response
+                    .persen_pendapatan_kelompok;
+                var data_grade_A = response.data_grade_A;
+                var data_eoq = response.data_eoq;
+                var data_p = response.data_p;
+
+                //buat format rupiah
+                var formatter = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                });
+
+                var html = buildMainTable(data, formatter, persenPendapatan, komulatif, gradeKomulatif,
+                    totalPendapatan);
+                var kel = buildKelompokTable(totalGradeSama, totalKomulatif, total_pendapatan_per_grade,
+                    persen_pendapatan_kelompok, formatter, totalPendapatan);
+                var eoq = buildEoqTable(data_grade_A, data_eoq, data_p, formatter);
+                var ss = buildSsTable(data_grade_A);
+
+                $('#data-table').html(html);
+                $('#data-kelompok').html(kel);
+                $('#data-eoq').html(eoq);
+                $('#data-ss').html(ss);
+            }
+
+            function buildMainTable(data, formatter, persenPendapatan, komulatif, gradeKomulatif,
+                totalPendapatan) {
+                var html = '';
+                $.each(data, function (index, item) {
+                    html += `<tr>
+                        <td>${index + 1}</td>
+                        <td>${item.nama_obat}</td>
+                        <td>${item.nama_satuan}</td>
+                        <td>${item.stock_out}</td>
+                        <td>${formatter.format(item.harga)}</td>
+                        <td>${formatter.format(item.pendapatan)}</td>
+                        <td>${persenPendapatan[index]}</td>
+                        <td>${komulatif[index]}</td>
+                        <td>${gradeKomulatif[index]}</td>
+                     </tr>`;
+                });
+
+                html += `<tr>
+                    <td class="fw-bold text-center" colspan="5">Total Pendapatan:</td>
+                    <td>${formatter.format(totalPendapatan)}</td>
+                 </tr>`;
+                return html;
+            }
+
+            function buildKelompokTable(totalGradeSama, totalKomulatif, total_pendapatan_per_grade,
+                persen_pendapatan_kelompok, formatter, totalPendapatan) {
+                var kel = '';
+                var no = 1;
+                $.each(totalGradeSama, function (index, k) {
+                    kel += `<tr>
+                        <td>${no++}</td>
+                        <td>${index}</td>
+                        <td>${k}</td>
+                        <td>${(k / totalKomulatif * 100).toFixed(2)}%</td>
+                        <td>${formatter.format(total_pendapatan_per_grade[index])}</td>
+                        <td>${persen_pendapatan_kelompok[index].toFixed(2)}%</td>
+                    </tr>`;
+                });
+
+                kel += `<tr>
+                    <td class="fw-bold text-center" colspan="2">Total</td>
+                    <td>${totalKomulatif}</td>
+                    <td>${(totalKomulatif / totalKomulatif * 100).toFixed(2)}%</td>
+                    <td>${formatter.format(totalPendapatan)}</td>
+                    <td>${(totalPendapatan / totalPendapatan * 100).toFixed(2)}%</td>
+                </tr>`;
+                return kel;
+            }
+
+            function buildEoqTable(data_grade_A, data_eoq, data_p, formatter) {
+                var eoq = '';
+                var no = 1;
+                $.each(data_grade_A, function (index, e) {
+                    eoq += `<tr>
+                        <td>${no++}</td>
+                        <td>${e.nama_obat}</td>
+                        <td>${e.stock_out}</td>
+                        <td> Rp. 50.000 </td>
+                        <td>${formatter.format(e.biaya_penyimpanan)}</td>
+                        <td>${data_eoq[index]}</td>
+                        <td>${data_p[index]}</td>
+                    </tr>`;
+                });
+                return eoq;
+            }
+
+            function buildSsTable(data_grade_A) {
+                var ss = '';
+                $.each(data_grade_A, function (index, d) {
+                    ss += `<tr>
+                        <td>${index + 1}</td>
+                        <td>${d.nama_obat}</td>
+                        <td>${d.stock_out}</td>
+                        <td>${(d.stock_out / 365).toFixed(2)}</td>
+                        <td> 3 </td>
+                        <td> 1.65 </td>
+                        <td>${(1.65 * (d.stock_out / 365) * 3).toFixed(2)}</td>
+                        <td>${(((d.stock_out / 365) * 3) + (1.65 * (d.stock_out / 365) * 3)).toFixed(2)}</td>
+                    </tr>`;
+                });
+                return ss;
+            }
+
+            function dataToSave(dataGradeA, dataEoq, dataP) {
+                var dataToSave = [];
+                $.each(dataGradeA, function (index, d) {
+                    dataToSave.push({
+                        'nama_obat': d.nama_obat,
+                        'safty_stock': (1.65 * (d.stock_out / 365) * 3).toFixed(2),
+                        'eoq': dataEoq[index],
+                        'rop': (((d.stock_out / 365) * 3) + (1.65 * (d.stock_out / 365) * 3))
+                            .toFixed(2),
+                        'nama_supplier': d.nama_sup,
+                    });
+                });
+                return dataToSave;
+            }
+
+            $('#btnPrint').click(function () {
+                var combinedData = dataToSave(dataGradeA, dataEoq, dataP);
+                var jsonString = JSON.stringify(combinedData);
+                var encodedData = encodeURIComponent(jsonString);
+
+                // ubah format dari menjadi hari, bulan, dan tahun
+                var dari = $('#dari').val();
+                var sampai = $('#sampai').val();
+
+                window.open('../reports/export-eoq-pdf.php?data=' + encodedData + '&dari=' + dari +
+                    '&sampai=' + sampai);
             });
         });
     </script>

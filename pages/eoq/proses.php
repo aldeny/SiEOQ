@@ -13,6 +13,7 @@
                 p.nama_obat, 
                 tp.harga,
                 s.nama_satuan,
+                sup.nama_sup,
                 SUM(tp.stock_out) as stock_out,
                 SUM(tp.stock_out * tp.harga) as pendapatan
             FROM transaksi_penjualan AS tp 
@@ -141,6 +142,7 @@
 
             }
 
+
             echo json_encode(
                 array(
                     'data' => $datas,
@@ -155,13 +157,12 @@
                     'data_grade_A' => $data_grade_A,
                     'data_eoq' => $data_eoq,
                     'data_p' => $data_p
-                    
                 )
             );
 
-        } else {
-            echo json_encode(array('error' => 'Data tidak ditemukan'));
-        }
+    } else {
+        echo json_encode(array('error' => 'Data tidak ditemukan'));
+    }
         
         
 
