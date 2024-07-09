@@ -145,8 +145,6 @@ if (!isset($_SESSION['username'])) {
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <?php if ($_SESSION['role'] == 2) { ?>
-
             <!-- Heading -->
             <div class="sidebar-heading">
                 EOQ
@@ -160,8 +158,6 @@ if (!isset($_SESSION['username'])) {
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
-
-            <?php } ?>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">

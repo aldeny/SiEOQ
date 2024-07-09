@@ -80,6 +80,20 @@ if (!isset($_SESSION['username'])) {
             </li>
 
             <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                EOQ
+            </div>
+
+            <li class="nav-item">
+                <a class="nav-link" href="../eoq/index.php">
+                    <i class="fas fa-fw fa-chart-pie"></i>
+                    <span>Economic Order Quantity</span></a>
+            </li>
+
+            <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
             <!-- Sidebar Toggler (Sidebar) -->

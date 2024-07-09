@@ -45,7 +45,9 @@ if (!isset($_SESSION['username'])) {
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../admin/dashboard.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center"
+                <?php if ($_SESSION['role'] == 1) { ?> href="../apoteker/dashboard.php" <?php } else { ?>
+                href="../admin/dashboard.php" <?php } ?>>
                 <div class="sidebar-brand-icon">
                     <i class="fas fa-hospital"></i>
                 </div>
@@ -57,10 +59,13 @@ if (!isset($_SESSION['username'])) {
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="../admin/dashboard.php">
+                <a class="nav-link" <?php if ($_SESSION['role'] == 1) { ?> href="../apoteker/dashboard.php"
+                    <?php } else { ?> href="../admin/dashboard.php" <?php } ?>>
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
+
+            <?php if ($_SESSION['role'] == 2) { ?>
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -109,6 +114,8 @@ if (!isset($_SESSION['username'])) {
                     <i class="fas fa-fw fa-money-bill-wave"></i>
                     <span>Penjualan</span></a>
             </li>
+
+            <?php } ?>
 
             <!-- Divider -->
             <hr class="sidebar-divider">
